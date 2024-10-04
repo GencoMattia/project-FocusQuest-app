@@ -1,29 +1,19 @@
-# project-focusquest-app
+## Front-End Overview
 
-This template should help get you started developing with Vue 3 in Vite.
+The front-end is designed to provide an engaging and intuitive user experience. Built using **Vue.js 3**, it integrates key libraries such as **Bootstrap**, **Axios**, **Vite**, and **Sass** to enhance performance, flexibility, and responsiveness.
 
-## Recommended IDE Setup
+### Key Features:
 
-[VSCode](https://code.visualstudio.com/) + [Volar](https://marketplace.visualstudio.com/items?itemName=Vue.volar) (and disable Vetur).
+- **User Registration and Login:**  
+  Users can create their profiles via a front-end interface using an API POST request. Once registered, they can log in and dynamically access all their personal data through API calls.
 
-## Customize configuration
+- **Task Management:**  
+  The core feature allows users to create and manage tasks tailored to their individual needs. The application is designed to display only the most urgent task at a time, helping to reduce the feeling of being overwhelmed by lengthy to-do lists, a common experience for people with ADHD.
 
-See [Vite Configuration Reference](https://vitejs.dev/config/).
+- **Motivation and Tracking Features:**  
+  The app will include additional functionality aimed at motivating users:
+  - **Time Tracking:** It will track the time spent on tasks, providing users with insight into how long tasks actually take. This can help users realize that tasks often require less time than they initially estimate.
+  - **Before and After Photos:** Users can upload images of their environment before and after completing a task, offering a visual representation of their progress and achievements.
 
-## Project Setup
-
-```sh
-npm install
-```
-
-### Compile and Hot-Reload for Development
-
-```sh
-npm run dev
-```
-
-### Compile and Minify for Production
-
-```sh
-npm run build
-```
+- **History and Task Tracking:**  
+  A comprehensive history and task tracking system will allow users to compare new tasks with previously completed ones. This feature will offer additional insights and help users better organize and plan their future activities.
