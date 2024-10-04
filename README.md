@@ -1,6 +1,6 @@
 ## 🎨 Front-End Overview
 
-The front-end is designed to provide an engaging and intuitive user experience. Built using **Vue.js 3**, it integrates key libraries such as **Bootstrap**, **Axios**, **Vite**, and **Sass** to enhance performance, flexibility, and responsiveness.
+The front-end is designed to provide an engaging and intuitive user experience. Built using [**Vue.js 3**](https://vuejs.org/), it integrates key libraries such as [**Bootstrap**](https://getbootstrap.com/), [**Axios**](https://axios-http.com/), [**Vite**](https://vitejs.dev/), and [**Sass**](https://sass-lang.com/) to enhance performance, flexibility, and responsiveness.
 
 ### 🚀 Key Features:
 
