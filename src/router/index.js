@@ -1,3 +1,4 @@
+import PageDashboard from '@/pages/PageDashboard.vue'
 import PageHome from '@/pages/PageHome.vue'
 import PageLogin from '@/pages/PageLogin.vue'
 import PageSignIn from '@/pages/PageSignIn.vue'
@@ -21,6 +22,11 @@ const router = createRouter({
       path: '/sign-in',
       name: 'signin',
       component: PageSignIn
+    },
+    {
+      path: '/dashboard',
+      name: 'dashboard',
+      component: PageDashboard
     },
   ]
 })
