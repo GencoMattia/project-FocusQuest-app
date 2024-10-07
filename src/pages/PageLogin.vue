@@ -10,7 +10,7 @@ export default {
     },
 
     methods: {
-        createNewUser(event) {
+        logInUser(event) {
             event.preventDefault();  
             axios.post("http://127.0.0.1:8000/api/auth/login", {
                 email: this.userEmail,
@@ -30,15 +30,15 @@ export default {
 </script>
 
 <template>
-    <form>
+    <form @submit.prevent="logInUser">
         <div class="mb-3">
             <label for="loginInputEmail" class="form-label">Email address</label>
-            <input type="email" class="form-control" id="loginInputEmail" aria-describedby="emailHelp">
+            <input v-model="userEmail" type="email" class="form-control" id="loginInputEmail" aria-describedby="emailHelp">
             <div id="emailHelp" class="form-text">We'll never share your email with anyone else.</div>
         </div>
         <div class="mb-3">
             <label for="loginInputPassword" class="form-label">Password</label>
-            <input type="password" class="form-control" id="loginInputPassword">
+            <input v-model="userPassword" type="password" class="form-control" id="loginInputPassword">
         </div>
         <div class="mb-3 form-check">
             <input type="checkbox" class="form-check-input" id="loginCheck">
