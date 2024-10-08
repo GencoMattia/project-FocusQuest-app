@@ -9,7 +9,7 @@ export default {
     props: {
         user: {
             type: Object,
-            required: true // Assicurati che l'oggetto user venga passato come prop
+            required: true
         }
     },
 };
