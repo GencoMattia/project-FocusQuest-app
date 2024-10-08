@@ -1,6 +1,7 @@
 import PageDashboard from '@/pages/PageDashboard.vue'
 import PageHome from '@/pages/PageHome.vue'
 import PageLogin from '@/pages/PageLogin.vue'
+import PageProfile from '@/pages/PageProfile.vue'
 import PageSignIn from '@/pages/PageSignIn.vue'
 import { createRouter, createWebHistory } from 'vue-router'
 
@@ -27,6 +28,12 @@ const router = createRouter({
       path: '/dashboard',
       name: 'dashboard',
       component: PageDashboard,
+      meta: { requireAuth: true },
+    },
+    {
+      path: '/profile/:nameSurname',
+      name: 'profile',
+      component: PageProfile,
       meta: { requireAuth: true },
     },
   ]
