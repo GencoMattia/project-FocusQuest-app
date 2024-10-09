@@ -1,23 +1,18 @@
 <script>
+import { store } from '@/store';
+
 export default {
     data() {
         return {
-            
+            store,
         };
-    },
-
-    props: {
-        user: {
-            type: Object,
-            required: true
-        }
     },
 };
 </script>
 
 <template>
     <div>
-        <h1>Profilo di {{ user.name }} {{ user.surname }}</h1>
+        <h1>Profilo di {{ this.store.loggedUser.name }} {{ this.store.loggedUser.surname }}</h1>
     </div>
 </template>
 
