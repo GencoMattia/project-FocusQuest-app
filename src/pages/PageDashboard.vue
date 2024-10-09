@@ -1,6 +1,8 @@
 <script>
 import axios from "axios";
 import UserProfileLink from "@/components/UserProfileLink.vue";
+import PageProfile from "./PageProfile.vue";
+import { store } from "../store";
 
 export default {
     components: {
@@ -12,7 +14,8 @@ export default {
             user: {
                 name: "",
                 surname: "",
-            }
+            },
+            store
         };
     },
 
@@ -23,6 +26,7 @@ export default {
                 console.log(response.data.user);
                 this.user.name = response.data.user.name;
                 this.user.surname = response.data.user.surname;
+                console.log(this.store.loggedUser)
             } catch (error) {
                 console.error("Errore nel recupero dei dati dell'utente:", error);
             }
