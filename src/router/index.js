@@ -1,3 +1,4 @@
+import CreateNewTask from '@/pages/CreateNewTask.vue'
 import PageHome from '@/pages/PageHome.vue'
 import PageLogin from '@/pages/PageLogin.vue'
 import { createRouter, createWebHistory } from 'vue-router'
@@ -15,6 +16,11 @@ const router = createRouter({
       path: '/login',
       name: 'login',
       component: PageLogin
+    },
+    {
+      path: '/create-new-task',
+      name: "create.new.task",
+      component: CreateNewTask
     }
   ]
 })
