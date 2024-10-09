@@ -2,24 +2,29 @@
 export default {
     data() {
         return {
-            isAuthenticated: false,
+            isAuthenticated: !!localStorage.getItem("token"),
         };
     },
 
     methods: {
         logOutUser() {
             localStorage.removeItem("token");
-
-            this.$router.push("/home");
+            this.isAuthenticated = false;
+            this.$router.push({name: 'home'});
         },
 
         checkAuthStatus() {
-            const token = localStorage.getItem("token");
-            this.isAuthenticated = !!token;
+            this.isAuthenticated = !!localStorage.getItem("token");
         }
     },
 
-    created() {
+    watch: {
+        '$route'() {
+            this.isAuthenticated = !!localStorage.getItem("token");
+        }
+    },
+
+    mounted() {
         this.checkAuthStatus();
     }
 };
