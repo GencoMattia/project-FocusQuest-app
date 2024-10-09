@@ -18,7 +18,13 @@ export default {
         }
     },
 
-    created() {
+    watch: {
+        '$route'() {
+            this.isAuthenticated = !!localStorage.getItem("token");
+        }
+    },
+
+    mounted() {
         this.checkAuthStatus();
     }
 };
