@@ -1,6 +1,7 @@
 <script>
 import axios from "axios";
 import UserProfileLink from "@/components/UserProfileLink.vue";
+import PageProfile from "./PageProfile.vue";
 
 export default {
     components: {

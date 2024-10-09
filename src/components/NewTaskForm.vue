@@ -37,21 +37,26 @@ export default {
                 });
         },
 
-        // Funzione per creare un nuovo task
         createNewTask() {
             const estimatedTime = this.getTotalMinutes();
 
-            const taskData = {
+            // const taskData = {
+            //     name: this.data.formName,
+            //     description: this.data.formDescription,
+            //     estimated_time: estimatedTime,
+            //     category_id: this.data.formCategoryId,
+            //     priority_id: this.data.formPriorityId,
+            // };
+
+            // console.log(taskData);
+
+            axios.post('http://localhost:8000/api/create-new-task', {
                 name: this.data.formName,
                 description: this.data.formDescription,
                 estimated_time: estimatedTime,
                 category_id: this.data.formCategoryId,
-                priority_id: this.data.formPriorityId,
-            };
-
-            console.log(taskData);
-
-            axios.post('http://127.0.0.1:8000/api/create-new-task', taskData)
+                priority_id: this.data.formPriorityId
+            })
                 .then((response) => {
                     console.log('Task creato con successo:', response.data);
                 })

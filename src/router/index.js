@@ -3,6 +3,7 @@ import PageHome from '@/pages/PageHome.vue'
 import PageLogin from '@/pages/PageLogin.vue'
 import PageProfile from '@/pages/PageProfile.vue'
 import PageSignIn from '@/pages/PageSignIn.vue'
+import CreateNewTask from '@/pages/CreateNewTask.vue'
 import { createRouter, createWebHistory } from 'vue-router'
 
 
@@ -39,7 +40,8 @@ const router = createRouter({
     {
       path: '/create-new-task',
       name: "create.new.task",
-      component: CreateNewTask
+      component: CreateNewTask,
+      meta: {requireAuth: true}
     }
   ]
 });
