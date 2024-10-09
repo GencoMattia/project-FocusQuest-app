@@ -5,7 +5,6 @@ import UserProfileLink from "@/components/UserProfileLink.vue";
 export default {
     components: {
         UserProfileLink,
-        PageProfile,
     },
 
     data() {
