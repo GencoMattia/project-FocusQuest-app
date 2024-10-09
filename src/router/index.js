@@ -5,6 +5,7 @@ import PageProfile from '@/pages/PageProfile.vue'
 import PageSignIn from '@/pages/PageSignIn.vue'
 import CreateNewTask from '@/pages/CreateNewTask.vue'
 import { createRouter, createWebHistory } from 'vue-router'
+import PageTaskIndex from '@/pages/PageTaskIndex.vue'
 
 
 const router = createRouter({
@@ -41,6 +42,12 @@ const router = createRouter({
       path: '/create-new-task',
       name: "create.new.task",
       component: CreateNewTask,
+      meta: {requireAuth: true}
+    },
+    {
+      path: '/:id/tasks',
+      name: "user.task.list",
+      component: PageTaskIndex,
       meta: {requireAuth: true}
     }
   ]

@@ -10,17 +10,16 @@ export default {
             data: {
                 formName: '',
                 formDescription: '',
-                formHours: 0,  // Variabile per le ore
-                formMinutes: 0, // Variabile per i minuti
+                formHours: 0,
+                formMinutes: 0, 
                 formCategoryId: 0,
                 formPriorityId: 0
             }
         }
     },
     methods: {
-        // Funzione per ottenere il totale dei minuti
-        getTotalMinutes() {
-            return (parseInt(this.data.formHours) * 60) + parseInt(this.data.formMinutes);
+        getTotalMinutes(hours, minutes) {
+            return (parseInt(hours) * 60) + parseInt(minutes);
         },
 
         getData() {
@@ -37,39 +36,27 @@ export default {
                 });
         },
 
-        createNewTask() {
-            const estimatedTime = this.getTotalMinutes();
+        async createNewTask(event) {
+            const estimatedTime = this.getTotalMinutes(this.data.formHours, this.data.formMinutes);
 
-            // const taskData = {
-            //     name: this.data.formName,
-            //     description: this.data.formDescription,
-            //     estimated_time: estimatedTime,
-            //     category_id: this.data.formCategoryId,
-            //     priority_id: this.data.formPriorityId,
-            // };
-
-            // console.log(taskData);
-
+            event.preventDefault()
             axios.post('http://localhost:8000/api/create-new-task', {
                 name: this.data.formName,
                 description: this.data.formDescription,
                 estimated_time: estimatedTime,
                 category_id: this.data.formCategoryId,
-                priority_id: this.data.formPriorityId
+                priority_id: this.data.formPriorityId,
             })
                 .then((response) => {
                     console.log('Task creato con successo:', response.data);
                 })
                 .catch((error) => {
                     if (error.response) {
-                        // La richiesta è stata fatta e il server ha risposto con un codice di stato
                         console.error('Risposta del server:', error.response.data);
                         console.error('Codice di stato:', error.response.status);
                     } else if (error.request) {
-                        // La richiesta è stata fatta ma non c'è stata risposta
                         console.error('Nessuna risposta ricevuta:', error.request);
                     } else {
-                        // Qualcosa è andato storto nel configurare la richiesta
                         console.error('Errore:', error.message);
                     }
                 });
@@ -83,7 +70,7 @@ export default {
 </script>
 
 <template>
-    <form @submit.prevent="createNewTask">
+    <form v-on:submit="createNewTask($event)">
 
         <div class="mb-3">
             <label for="form-name" class="form-label">Name</label>
@@ -128,7 +115,6 @@ export default {
                 </option>
             </select>
         </div>
-
 
         <button type="submit" class="btn btn-primary">Submit</button>
     </form>
