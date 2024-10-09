@@ -1,8 +1,8 @@
 <script>
 import axios from "axios";
 import UserProfileLink from "@/components/UserProfileLink.vue";
-import PageProfile from "./PageProfile.vue";
-import { store } from "../store";
+import { store } from "@/store";
+
 
 export default {
     components: {
@@ -11,11 +11,12 @@ export default {
 
     data() {
         return {
+            store,
             user: {
-                name: "",
-                surname: "",
+            
             },
             store
+
         };
     },
 
@@ -24,8 +25,12 @@ export default {
             try {
                 const response = await axios.get('http://127.0.0.1:8000/api/user');
                 console.log(response.data.user);
-                this.user.name = response.data.user.name;
-                this.user.surname = response.data.user.surname;
+
+                this.store.loggedUser.name = response.data.user.name;
+                this.store.loggedUser.surname = response.data.user.surname;
+                this.store.loggedUser.email = response.data.user.email;
+                this.store.loggedUser.id = response.data.user.id;
+
                 console.log(this.store.loggedUser)
             } catch (error) {
                 console.error("Errore nel recupero dei dati dell'utente:", error);
