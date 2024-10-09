@@ -4,7 +4,7 @@ import { store } from '@/store';
 export default {
     data() {
         return {
-            tasks: null,
+            tasks: [],
             store
         };
     },
@@ -15,7 +15,7 @@ export default {
             .then((response) => {
                 console.log('Task recuperate correttamente');
                 console.log(response);
-                this.tasks = response.data.tasks;
+                this.tasks = response.data;
             })
             .catch((error) => {
                 console.log(error);
@@ -33,7 +33,7 @@ export default {
     <h1>ciao sono nella task list del singolo utente</h1>
     <div v-if="tasks">
         <ul>
-            <li v-for="task in tasks" :key="task.id">{{ task.name }}</li>
+            <li v-for="(task, index) in tasks" :key="index">{{ task.name }}</li>
         </ul>
     </div>
     <div v-else>
