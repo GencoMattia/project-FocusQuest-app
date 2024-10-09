@@ -45,7 +45,7 @@ const router = createRouter({
       meta: {requireAuth: true}
     },
     {
-      path: '/:id/tasks',
+      path: '/tasks',
       name: "user.task.list",
       component: PageTaskIndex,
       meta: {requireAuth: true}

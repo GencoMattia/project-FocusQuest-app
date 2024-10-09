@@ -1,18 +1,17 @@
 <script>
 import axios from 'axios';
+import { store } from '@/store';
 export default {
     data() {
         return {
             tasks: null,
-            user_id: this.$route.params.id
+            store
         };
     },
 
     methods: {
-        getUserTask(id) {
-
-            user_id = this.$route.params.id
-            axios.get(`http://127.0.0.1:8000/api/${id}/tasks`)
+        getUserTask() {
+            axios.get(`http://127.0.0.1:8000/api/tasks`)
             .then((response) => {
                 console.log('Task recuperate correttamente');
                 console.log(response);
@@ -25,9 +24,7 @@ export default {
     },
 
     mounted() {
-        console.log(this.user_id);
-        console.log(this.$route)
-        this.getUserTask(this.$route.params.id);
+        this.getUserTask();
     }
 }
 </script>
