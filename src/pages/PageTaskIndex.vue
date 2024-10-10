@@ -1,6 +1,7 @@
 <script>
 import axios from 'axios';
 import { store } from '@/store';
+import router from '@/router';
 export default {
     data() {
         return {
@@ -21,7 +22,13 @@ export default {
                 .catch((error) => {
                     console.log(error);
                 });
+        },
+
+        showTask(id) {
+            console.log('id della task:', id)
+            this.$router.push({ name: 'show.task', params: { id: id } });
         }
+
     },
 
     mounted() {
@@ -48,13 +55,16 @@ export default {
             </thead>
             <tbody>
                 <tr v-for="task in tasks" :key="task.id">
-                    <td>{{task.name}}</td>
-                    <td>{{task.description}}</td>
-                    <td>{{task.category.name}}</td>
-                    <td>{{task.priority.name}}</td>
-                    <td>{{task.estimated_time}} minuti</td>
-                    <td>{{task.status.name}}</td>
-
+                    <td>{{ task.name }}</td>
+                    <td>{{ task.description }}</td>
+                    <td>{{ task.category.name }}</td>
+                    <td>{{ task.priority.name }}</td>
+                    <td>{{ task.estimated_time }} minuti</td>
+                    <td>{{ task.status.name }}</td>
+                    <!-- ! AZIONI -->
+                    <td>
+                        <button @click="showTask(task.id)" class="btn btn-primary ">Show</button>
+                    </td>
                 </tr>
             </tbody>
         </table>
