@@ -20,13 +20,12 @@ export default {
 
             },
 
-            estimatedTimeOrder: "asc",
-
+            isAscending: true,
         };
     },
 
     methods: {
-        async fetchUserData(estimatedTimeOrder) {
+        async fetchUserData() {
             try {
                 const response = await axios.get('http://127.0.0.1:8000/api/user');
                 console.log(response.data.user);
@@ -43,9 +42,11 @@ export default {
         },
 
         getPriorityTask() {
+            console.log("Order direction:", this.isAscending ? "Ascending" : "Descending");
+
             axios.get('http://127.0.0.1:8000/api/tasks/top-priority', {
                 params: {
-                    estimated_time_order: this.estimatedTimeOrder
+                    estimated_time_order: this.isAscending ? "asc" : "desc"
                 }
             }).then((response) => {
                 console.log(response.data)
@@ -59,11 +60,21 @@ export default {
                 console.error("Errore nel recupera della task con priorità:", error);
             })
         },
+
+        toggleOrder() {
+            this.getPriorityTask();
+        },
     },
 
     mounted() {
         this.fetchUserData();
         this.getPriorityTask();
+    },
+
+    computed: {
+        orderLabel() {
+            return this.isAscending ? "Ascendente" : "Discendente";
+        }
     }
 };
 </script>
@@ -99,6 +110,14 @@ export default {
                         <h5 class="card-title task-title">🔥 Più Urgente</h5>
                         <p class="card-text">Questa è la tua task più urgente</p>
 
+                        <div class="form-check form-switch">
+                            <input class="form-check-input" type="checkbox" role="switch" id="taskOrderSwitch"
+                                v-model="isAscending" @change="this.toggleOrder">
+                            <label class="form-check-label" for="taskOrderSwitch">
+                                {{ this.orderLabel }}
+                            </label>
+                        </div>
+
                         <div class="task-section">
                             <h6 class="section-title">Nome</h6>
                             <p class="section-content">{{ this.priorityTask.name }}</p>
@@ -114,7 +133,9 @@ export default {
                             <p class="section-content">{{ this.priorityTask.estimated_time }} ore</p>
                         </div>
 
-                        <a href="#" class="btn btn-outline-secondary btn-task text-white">Maggiori informazioni</a>
+                        <a href="#" class="btn btn-outline-secondary btn-task text-white">
+                            Maggiori informazioni
+                        </a>
                     </div>
                 </div>
             </div>
