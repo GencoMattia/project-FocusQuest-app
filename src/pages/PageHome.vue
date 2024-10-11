@@ -11,14 +11,14 @@ export default {
 <template>
     <div class="homepage">
         <!-- Hero Section -->
-        <section class="hero">
+        <section class="hero d-flex flex-column-reverse">
             <div class="hero-text">
                 <p>Your playful and productive task management solution.</p>
                 <h1>Welcome to FocusQuest</h1>
                 <a href="#features" class="btn-primary">Explore Features</a>
             </div>
             <div class="hero-image">
-                <img src="" alt="Task management illustration">
+                <img src="../assets/img/Jumbo-img.jpg" alt="Task management illustration">
             </div>
         </section>
 
