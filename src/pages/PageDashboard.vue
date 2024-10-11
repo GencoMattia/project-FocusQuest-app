@@ -89,8 +89,7 @@ export default {
                         <h3 class="card-title mb-0">Benvenuto, {{ store.loggedUser.name }}!</h3>
                     </div>
                     <div class="card-body">
-                        <p class="lead">This is your dashboard, {{ store.loggedUser.name }} {{ store.loggedUser.surname
-                            }}.</p>
+                        <p class="lead">This is your dashboard, {{ store.loggedUser.name }} {{ store.loggedUser.surname }}.</p>
                         <p><strong>Email:</strong> {{ store.loggedUser.email }}</p>
                         <p><strong>User ID:</strong> {{ store.loggedUser.id }}</p>
 
@@ -102,8 +101,9 @@ export default {
             </div>
         </div>
 
-        <!-- Additional Features -->
+        <!-- Task Cards -->
         <div class="row justify-content-center mt-5">
+            <!-- Task più urgente -->
             <div class="col-lg-4">
                 <div class="card task-card shadow-sm">
                     <div class="card-body text-center">
@@ -112,25 +112,25 @@ export default {
 
                         <div class="form-check form-switch">
                             <input class="form-check-input" type="checkbox" role="switch" id="taskOrderSwitch"
-                                v-model="isAscending" @change="this.toggleOrder">
+                                v-model="isAscending" @change="toggleOrder">
                             <label class="form-check-label" for="taskOrderSwitch">
-                                {{ this.orderLabel }}
+                                {{ orderLabel }}
                             </label>
                         </div>
 
                         <div class="task-section">
                             <h6 class="section-title">Nome</h6>
-                            <p class="section-content">{{ this.priorityTask.name }}</p>
+                            <p class="section-content">{{ priorityTask.name }}</p>
                         </div>
 
                         <div class="task-section">
                             <h6 class="section-title">Scadenza</h6>
-                            <p class="section-content">{{ this.priorityTask.deadline }}</p>
+                            <p class="section-content">{{ priorityTask.deadline }}</p>
                         </div>
 
                         <div class="task-section">
                             <h6 class="section-title">Tempo stimato</h6>
-                            <p class="section-content">{{ this.priorityTask.estimated_time }} ore</p>
+                            <p class="section-content">{{ priorityTask.estimated_time }} ore</p>
                         </div>
 
                         <a href="#" class="btn btn-outline-secondary btn-task text-white">
@@ -140,12 +140,13 @@ export default {
                 </div>
             </div>
 
+            <!-- New task -->
             <div class="col-lg-4">
                 <div class="card shadow-sm">
                     <div class="card-body text-center">
-                        <h5 class="card-title">Feature 2</h5>
-                        <p class="card-text">A quick description of Feature 2.</p>
-                        <a href="#" class="btn btn-outline-secondary">Learn More</a>
+                        <h5 class="card-title">➕ Nuova Task</h5>
+                        <p class="card-text">Crea una nuova task da zero.</p>
+                        <router-link :to="{ name: 'create.new.task' }" class="btn btn-outline-primary">Crea Task</router-link>
                     </div>
                 </div>
             </div>
@@ -187,95 +188,26 @@ export default {
                     font-size: 1.1rem;
                     margin-bottom: 10px;
                 }
-            }
-        }
 
-        .btn {
-            &-primary {
-                background-color: $primary-color;
-                border-color: $primary-color;
+                .btn-task {
+                    border-color: $primary;
+                    background-color: $primary;
+                    color: white;
+                    padding: 0.5rem 1.5rem;
+                    text-transform: uppercase;
 
-                &:hover {
-                    background-color: $primary-dark;
+                    &:hover {
+                        background-color: darken($primary, 10%);
+                        color: white;
+                    }
                 }
             }
 
-            &-outline-primary {
-                border-color: $primary-color;
-                color: $primary-color;
-
-                &:hover {
-                    background-color: $primary-color;
-                    color: $light-color;
-                }
-            }
-
-            &-outline-secondary {
-                border-color: $secondary-color;
-                color: $secondary-color;
-
-                &:hover {
-                    background-color: $secondary-color;
-                    color: $light-color;
-                }
+            &:hover {
+                transform: translateY(-5px);
+                transition: transform 0.3s ease;
             }
         }
-    }
-}
-
-.task-card {
-    border: 1px solid $primary; // Usa il colore primario di Bootstrap per il bordo
-    border-radius: 10px;
-    background-color: #f8f9fa; // Colore di sfondo leggero
-
-    .card-body {
-        padding: 1.5rem;
-    }
-
-    .task-title {
-        font-size: 1.25rem;
-        font-weight: bold;
-        color: #dc3545; // Rosso per indicare urgenza
-        text-transform: uppercase;
-        margin-bottom: 1.5rem;
-    }
-
-    .task-section {
-        margin-bottom: 1.5rem;
-        padding: 0.5rem;
-        border: 1px solid lighten($primary, 40%);
-        border-radius: 5px;
-        background-color: #ffffff;
-
-        .section-title {
-            font-size: 1rem;
-            font-weight: bold;
-            color: $primary; // Colore primario per le etichette
-            margin-bottom: 0.5rem;
-        }
-
-        .section-content {
-            font-size: 1.1rem;
-            color: #343a40;
-        }
-    }
-
-    .btn-task {
-        border-color: $primary;
-        background-color: $primary;
-        color: white;
-        padding: 0.5rem 1.5rem;
-        text-transform: uppercase;
-
-        &:hover {
-            background-color: darken($primary, 10%);
-            color: white;
-        }
-    }
-
-    &:hover {
-        transform: translateY(-5px); // Piccolo effetto di sollevamento al passaggio del mouse
-        transition: transform 0.3s ease;
     }
 }
 </style>
