@@ -11,28 +11,38 @@ export default {
                 formName: '',
                 formDescription: '',
                 formHours: 0,
-                formMinutes: 0, 
+                formMinutes: 0,
                 formCategoryId: 0,
                 formPriorityId: 0
             },
 
             suggestedTasks: [],
-            showSuggestions: false,
+            showDropdown: false,
         }
     },
 
     watch: {
-        "data.FormName": function(newVal) {
-            if (newVal.lenght > 1) {
-                this.searchTasks(newVal);
+        "data.formName": function (newVal) {
+            if (newVal.length > 1) {
+                this.getSuggestedTask();
             } else {
                 this.suggestedTasks = [];
-                this.showSuggestions = false;
+                this.showDropdown = false;
             }
         }
-    },  
+    },
 
     methods: {
+        fillForm(task) {
+            this.data.formName = task.name;
+            this.data.formDescription = task.description;
+            this.data.formHours = Math.floor(task.estimated_time / 60);
+            this.data.formMinutes = task.estimated_time % 60;
+            this.data.formCategoryId = task.category_id;
+            this.data.formPriorityId = task.priority_id;
+            this.showDropdown = false;
+        },
+
         getTotalMinutes(hours, minutes) {
             return (parseInt(hours) * 60) + parseInt(minutes);
         },
@@ -43,18 +53,31 @@ export default {
                     this.categories = response.data.data.categories;
                     this.priorities = response.data.data.priorities;
                     this.statuses = response.data.data.statuses;
-
-                    console.log(this.categories, this.priorities, this.statuses)
                 })
                 .catch((error) => {
-                    console.error('Errore nel caricamento dei dati:', error);
+                    console.error('Error loading form data:', error);
                 });
+        },
+
+        getSuggestedTask() {
+            if (this.data.formName.length > 1) {
+                axios.get(`http://localhost:8000/api/suggest-tasks?query=${this.data.formName}`)
+                    .then((response) => {
+                        this.suggestedTasks = response.data.tasks;
+                        this.showDropdown = true;
+                    })
+                    .catch((error) => {
+                        console.error('Error loading task suggestions:', error);
+                    });
+            } else {
+                this.showDropdown = false;
+            }
         },
 
         async createNewTask(event) {
             const estimatedTime = this.getTotalMinutes(this.data.formHours, this.data.formMinutes);
 
-            event.preventDefault()
+            event.preventDefault();
             axios.post('http://localhost:8000/api/create-new-task', {
                 name: this.data.formName,
                 description: this.data.formDescription,
@@ -62,39 +85,19 @@ export default {
                 category_id: this.data.formCategoryId,
                 priority_id: this.data.formPriorityId,
             })
-            .then((response) => {
-                console.log('Task creato con successo:', response.data);
-            })
-            .catch((error) => {
-                if (error.response) {
-                    console.error('Risposta del server:', error.response.data);
-                    console.error('Codice di stato:', error.response.status);
-                } else if (error.request) {
-                    console.error('Nessuna risposta ricevuta:', error.request);
-                } else {
-                    console.error('Errore:', error.message);
-                }
-            });
-        },
-
-        suggestTasks(query) {
-            axios.get(`http://localhost:8000/api/tasks/search-tasks`, {
-                params: {
-                    query
-                }
-            })
-            .then((response) => {
-                this.suggestedTasks = response.data.tasks;
-                this.showSuggestions = true;
-            })
-            .catch((error) => {
-                console.error("Errore nel recupero suggerimenti:", error);
-            });
-        },
-
-        selectSuggestion(task) {
-            this.data.formName = task.name;
-            this.showSuggestions = false;
+                .then((response) => {
+                    console.log('Task created successfully:', response.data);
+                    this.resetForm();
+                })
+                .catch((error) => {
+                    if (error.response) {
+                        console.error('Server response:', error.response.data);
+                    } else if (error.request) {
+                        console.error('No response received:', error.request);
+                    } else {
+                        console.error('Error:', error.message);
+                    }
+                });
         },
 
         resetForm() {
@@ -104,8 +107,8 @@ export default {
             this.data.formMinutes = 0;
             this.data.formCategoryId = 0;
             this.data.formPriorityId = 0;
-            this.suggestions = [];
-            this.showSuggestions = false;
+            this.suggestedTasks = [];
+            this.showDropdown = false;
         }
     },
 
@@ -117,17 +120,17 @@ export default {
 
 <template>
     <form v-on:submit="createNewTask($event)">
-
         <div class="mb-3">
             <label for="form-name" class="form-label">Name</label>
-            <input type="text" v-model="data.formName" class="form-control" id="form-name" name="name">
+            <input type="text" v-model="data.formName" @input="getSuggestedTasks" class="form-control" id="form-name"
+                name="name">
 
-            <!-- Dropdown for suggestions -->
-            <ul v-if="showSuggestions" class="suggestions-list">
-                <li v-for="(task, index) in suggestions" :key="index" @click="selectSuggestion(task)">
+            <!-- Suggestions Dropdown -->
+            <ul v-if="showDropdown" class="dropdown">
+                <li v-for="task in suggestedTasks" :key="task.id" @click="fillForm(task)">
                     {{ task.name }}
                 </li>
-                <li @click="showSuggestions = false">Create New Task</li>
+                <li @click="showDropdown = false">Crea Nuova Task</li>
             </ul>
         </div>
 
@@ -137,16 +140,9 @@ export default {
                 name="description">
         </div>
 
-        <!-- <div class="mb-3">
-            <label for="exampleInputPassword1" class="form-label">Deadline</label>
-            <input type="datetime-local" class="form-control" id="datetime-input" name="datetime">
-        </div> -->
-
         <div class="mb-3">
-            <label for="exampleInputPassword1" class="form-label">Estimated Time</label>
             <label for="hours">Hours:</label>
             <input type="number" v-model="data.formHours" id="form-hours" name="hours" min="0" placeholder="0">
-
             <label for="minutes">Minutes:</label>
             <input type="number" v-model="data.formMinutes" id="form-minutes" name="minutes" min="0" max="59"
                 placeholder="0" required>
@@ -174,6 +170,7 @@ export default {
     </form>
 </template>
 
+
 <style scoped lang="scss">
 .suggestions-list {
     list-style: none;
@@ -190,5 +187,4 @@ export default {
 .suggestions-list li:hover {
     background-color: #f0f0f0;
 }
-
 </style>
