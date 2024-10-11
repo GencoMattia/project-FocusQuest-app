@@ -14,9 +14,24 @@ export default {
                 formMinutes: 0, 
                 formCategoryId: 0,
                 formPriorityId: 0
-            }
+            },
+
+            suggestedTasks: [],
+            showSuggestions: false,
         }
     },
+
+    watch: {
+        "data.FormName": function(newVal) {
+            if (newVal.lenght > 1) {
+                this.searchTasks(newVal);
+            } else {
+                this.suggestedTasks = [];
+                this.showSuggestions = false;
+            }
+        }
+    },  
+
     methods: {
         getTotalMinutes(hours, minutes) {
             return (parseInt(hours) * 60) + parseInt(minutes);
@@ -47,19 +62,34 @@ export default {
                 category_id: this.data.formCategoryId,
                 priority_id: this.data.formPriorityId,
             })
-                .then((response) => {
-                    console.log('Task creato con successo:', response.data);
-                })
-                .catch((error) => {
-                    if (error.response) {
-                        console.error('Risposta del server:', error.response.data);
-                        console.error('Codice di stato:', error.response.status);
-                    } else if (error.request) {
-                        console.error('Nessuna risposta ricevuta:', error.request);
-                    } else {
-                        console.error('Errore:', error.message);
-                    }
-                });
+            .then((response) => {
+                console.log('Task creato con successo:', response.data);
+            })
+            .catch((error) => {
+                if (error.response) {
+                    console.error('Risposta del server:', error.response.data);
+                    console.error('Codice di stato:', error.response.status);
+                } else if (error.request) {
+                    console.error('Nessuna risposta ricevuta:', error.request);
+                } else {
+                    console.error('Errore:', error.message);
+                }
+            });
+        },
+
+        suggestTasks(query) {
+            axios.get(`http://localhost:8000/api/tasks/search-tasks`, {
+                params: {
+                    query
+                }
+            })
+            .then((response) => {
+                this.suggestedTasks = response.data.tasks;
+                this.showSuggestions = true;
+            })
+            .catch((error) => {
+                console.error("Errore nel recupero suggerimenti:", error);
+            });
         }
     },
 
