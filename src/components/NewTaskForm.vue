@@ -90,6 +90,22 @@ export default {
             .catch((error) => {
                 console.error("Errore nel recupero suggerimenti:", error);
             });
+        },
+
+        selectSuggestion(task) {
+            this.data.formName = task.name;
+            this.showSuggestions = false;
+        },
+
+        resetForm() {
+            this.data.formName = '';
+            this.data.formDescription = '';
+            this.data.formHours = 0;
+            this.data.formMinutes = 0;
+            this.data.formCategoryId = 0;
+            this.data.formPriorityId = 0;
+            this.suggestions = [];
+            this.showSuggestions = false;
         }
     },
 
