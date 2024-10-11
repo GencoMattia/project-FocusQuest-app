@@ -130,7 +130,7 @@ export default {
 
                         <div class="task-section">
                             <h6 class="section-title">Tempo stimato</h6>
-                            <p class="section-content">{{ priorityTask.estimated_time }} ore</p>
+                            <p class="section-content">{{ priorityTask.estimated_time }} Minuti</p>
                         </div>
 
                         <a href="#" class="btn btn-outline-secondary btn-task text-white">
