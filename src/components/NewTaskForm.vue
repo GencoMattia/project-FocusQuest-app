@@ -121,6 +121,14 @@ export default {
         <div class="mb-3">
             <label for="form-name" class="form-label">Name</label>
             <input type="text" v-model="data.formName" class="form-control" id="form-name" name="name">
+
+            <!-- Dropdown for suggestions -->
+            <ul v-if="showSuggestions" class="suggestions-list">
+                <li v-for="(task, index) in suggestions" :key="index" @click="selectSuggestion(task)">
+                    {{ task.name }}
+                </li>
+                <li @click="showSuggestions = false">Create New Task</li>
+            </ul>
         </div>
 
         <div class="mb-3">
@@ -166,4 +174,21 @@ export default {
     </form>
 </template>
 
-<style scoped lang="scss"></style>
+<style scoped lang="scss">
+.suggestions-list {
+    list-style: none;
+    border: 1px solid #ccc;
+    max-height: 150px;
+    overflow-y: auto;
+}
+
+.suggestions-list li {
+    padding: 8px;
+    cursor: pointer;
+}
+
+.suggestions-list li:hover {
+    background-color: #f0f0f0;
+}
+
+</style>
