@@ -66,8 +66,11 @@ export default {
                                         <li v-if="isAuthenticated">
                                             <router-link class="dropdown-item" :to="`/profile/${this.store.loggedUser.name}-${this.store.loggedUser.surname}`">Profilo</router-link>
                                         </li>
-                                        <li v-else>
+                                        <li v-if="!isAuthenticated">
                                             <router-link class="dropdown-item" :to="{ name: 'login'}">Login</router-link>
+                                        </li>
+                                        <li v-if="!isAuthenticated">
+                                            <router-link class="dropdown-item" :to="{ name: 'signin'}">Registrati</router-link>
                                         </li>
                                     </ul>
                                 </div>
