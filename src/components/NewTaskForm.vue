@@ -18,11 +18,17 @@ export default {
 
             suggestedTasks: [],
             showDropdown: false,
+            taskSelected: false,
         }
     },
 
     watch: {
         "data.formName": function (newVal) {
+            if(this.taskSelected) {
+                this.taskSelected = false;
+                return;
+            }
+
             if (newVal.length > 1) {
                 this.getSuggestedTask();
             } else {
@@ -40,6 +46,8 @@ export default {
             this.data.formMinutes = task.estimated_time % 60;
             this.data.formCategoryId = task.category_id;
             this.data.formPriorityId = task.priority_id;
+            
+            this.taskSelected = true;
             this.showDropdown = false;
         },
 
