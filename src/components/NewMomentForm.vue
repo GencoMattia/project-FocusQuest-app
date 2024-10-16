@@ -3,9 +3,24 @@ import axios from 'axios';
 export default {
     data() {
         return {
+            emotions: [],
+            moment_types: []
 
         }
+    },
+    methods:{
+        getFormData(){
+            axios.get('http://127.0.0.1:8000/api/get-moment-form-data')
+            .then((response)=>{
+                console.log(response);
+            })
+        }
+        
+    },
+    mounted(){
+        this.getFormData()
     }
+
 }
 </script>
 
