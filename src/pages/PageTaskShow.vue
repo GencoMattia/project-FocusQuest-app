@@ -89,6 +89,10 @@ export default {
                         <button v-if ="task.status_id == 4" class="btn btn-secondary me-2" @click="modifyTaskStatus(2, task.id)">Riavvia Task</button>
                         <button v-if="task.status_id == 2" class="btn btn-stop me-2" @click="modifyTaskStatus(4, task.id)">Interrompi Task</button>
                         <button class="btn btn-complete" @click="modifyTaskStatus(3, task.id)">Completa Task</button>
+
+                        <button class="btn btn-tertiary">
+                            <RouterLink :to="{name: 'create.new.moment', params:{id: task.id}}">Aggiungi un Momento</RouterLink>
+                        </button>
                     </div>
                 </div>
                 <div v-else>
