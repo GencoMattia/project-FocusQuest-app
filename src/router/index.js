@@ -53,16 +53,16 @@ const router = createRouter({
       meta: {requireAuth: true}
     },
     {
-      path: '/tasks/:id/create-new-moment',
-      name: "create.new.moment",
-      component: CreateNewMoment,
-      meta: {requireAuth: true}
-    },
-    {
       path: '/tasks/:id',
       name: 'show.task',
       component: PageTaskShow,
       meta: {requireAuth: true}
+    },
+    {
+      path: '/tasks/:id/create-new-moment',
+      name: "create.new.moment",
+      component: CreateNewMoment,
+      meta: {requireAuth: true},
     }
   ]
 });

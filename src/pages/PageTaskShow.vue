@@ -48,7 +48,7 @@ export default {
     },
 
     mounted() {
-        this.getTaskData(this.task_id)
+        this.getTaskData()
     }
 }
 </script>
