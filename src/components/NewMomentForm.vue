@@ -36,7 +36,7 @@ export default {
 
         submitForm(){
             // console.log('Dati pronti per essere inviati', this.momentData)
-            axios.post(`http://127.0.0.1:8000/api/tasks/${this.task.id}/create`, {
+            axios.post(`http://127.0.0.1:8000/api/moments/tasks/${this.task.id}/create`, {
                     name: this.momentData.name,
                     task_id: this.task.id,
                     message: this.momentData.message,
