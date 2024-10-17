@@ -69,7 +69,7 @@ export default {
 
         getSuggestedTask() {
             if (this.data.formName.length > 1) {
-                axios.get(`http://127.0.0.1:8000api/tasks/suggest-tasks?query=${this.data.formName}`)
+                axios.get(`http://127.0.0.1:8000/api/tasks/suggest-tasks?query=${this.data.formName}`)
                     .then((response) => {
                         this.suggestedTasks = response.data.tasks;
                         this.showDropdown = true;
