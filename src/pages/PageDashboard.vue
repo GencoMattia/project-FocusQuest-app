@@ -27,7 +27,7 @@ export default {
     methods: {
         async fetchUserData() {
             try {
-                const response = await axios.get('http://127.0.0.1:8000/api/user');
+                const response = await axios.get('http://127.0.0.1:8000/api/users/show');
                 console.log(response.data.user);
 
                 this.store.loggedUser.name = response.data.user.name;
