@@ -6,6 +6,7 @@ import PageSignIn from '@/pages/PageSignIn.vue'
 import CreateNewTask from '@/pages/CreateNewTask.vue'
 import { createRouter, createWebHistory } from 'vue-router'
 import PageTaskIndex from '@/pages/PageTaskIndex.vue'
+import CreateNewMoment from '@/pages/CreateNewMoment.vue'
 import PageTaskShow from '@/pages/PageTaskShow.vue'
 
 
@@ -56,6 +57,12 @@ const router = createRouter({
       name: 'show.task',
       component: PageTaskShow,
       meta: {requireAuth: true}
+    },
+    {
+      path: '/tasks/:id/create-new-moment',
+      name: "create.new.moment",
+      component: CreateNewMoment,
+      meta: {requireAuth: true},
     }
   ]
 });
