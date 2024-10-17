@@ -9,11 +9,11 @@ export default {
 
             momentData: {
                 name: '',
+                task_id: 0,
                 message: '',
                 emotion_id: 0, 
-                moment_type_id: 0,
+                moments_type_id: 0,
             },
-
         }
     },
     methods:{
@@ -27,36 +27,30 @@ export default {
             })
             .then((response)=>{
                 console.log(response);
-                console.log(task_id)
                 this.emotions = response.data.data.emotions
                 this.moment_types = response.data.data.moment_types
                 this.task = response.data.data.task[0]
+                this.momentData.task_id = this.task.id
             })
         },
 
         submitForm(){
-            console.log(this.momentData)
-
+            // console.log('Dati pronti per essere inviati', this.momentData)
             axios.post(`http://127.0.0.1:8000/api/tasks/${this.task.id}/create-new-moment`, {
-                params: {
-                    task_id: this.task.id,
                     name: this.momentData.name,
+                    task_id: this.task.id,
                     message: this.momentData.message,
                     emotion_id: this.momentData.emotion_id,
-                    moment_type_id: this.momentData.moment_type_id
-                }
+                    moments_type_id: this.momentData.moments_type_id,
             })
             .then((response) =>{
                 console.log('momento creato con successo')
-                console.log(response)
             })
 
         }
         
     },
     mounted(){
-        console.log('token', localStorage.getItem("token"));
-        console.log(this.$route)
         this.getFormData()
     }
 
@@ -70,6 +64,8 @@ export default {
                 <h1>New Moment Form</h1>
                 <h2>for the task: {{ task.name }}</h2>
                 <form action="" method="" @submit.prevent="submitForm">
+
+                    <input type="hidden" name="task_id" :value="task.id">
                     <div class="mb-3">
                         <label for="name">Insert Moment's Name</label>
                         <input type="text" name="name" id="moment-form-name"
@@ -97,8 +93,8 @@ export default {
 
                     <div class="mb-3">
                         <label for="name">Insert Moment's Type</label>
-                        <select name="moment_type_id" id="moment-form-type"
-                        v-model="momentData.moment_type_id">
+                        <select name="moments_type_id" id="moment-form-type"
+                        v-model="momentData.moments_type_id">
                             <option v-for="moment_type in moment_types" :value="moment_type.id">{{ moment_type.name }}</option>
                         </select>
                     </div>
