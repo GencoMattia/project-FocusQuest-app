@@ -20,7 +20,7 @@ export default {
         getFormData(){
             const task_id = this.$route.params.id
 
-            axios.get('http://127.0.0.1:8000/api/get-moment-form-data', {
+            axios.get('http://127.0.0.1:8000/api/moments/form-data', {
                 params:{
                     task_id: task_id,
                 }
@@ -36,7 +36,7 @@ export default {
 
         submitForm(){
             // console.log('Dati pronti per essere inviati', this.momentData)
-            axios.post(`http://127.0.0.1:8000/api/tasks/${this.task.id}/create-new-moment`, {
+            axios.post(`http://127.0.0.1:8000/api/tasks/${this.task.id}/create`, {
                     name: this.momentData.name,
                     task_id: this.task.id,
                     message: this.momentData.message,
