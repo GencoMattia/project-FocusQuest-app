@@ -56,7 +56,7 @@ export default {
         },
 
         getData() {
-            axios.get('http://127.0.0.1:8000/api/get-form-data')
+            axios.get('http://127.0.0.1:8000/api/tasks/form-data')
                 .then((response) => {
                     this.categories = response.data.data.categories;
                     this.priorities = response.data.data.priorities;
@@ -69,7 +69,7 @@ export default {
 
         getSuggestedTask() {
             if (this.data.formName.length > 1) {
-                axios.get(`http://127.0.0.1:8000/api/tasks/suggest-tasks?query=${this.data.formName}`)
+                axios.get(`http://127.0.0.1:8000api/tasks/suggest-tasks?query=${this.data.formName}`)
                     .then((response) => {
                         this.suggestedTasks = response.data.tasks;
                         this.showDropdown = true;
@@ -86,7 +86,7 @@ export default {
             const estimatedTime = this.getTotalMinutes(this.data.formHours, this.data.formMinutes);
 
             event.preventDefault();
-            axios.post('http://localhost:8000/api/create-new-task', {
+            axios.post('http://localhost:8000/api/tasks/create', {
                 name: this.data.formName,
                 description: this.data.formDescription,
                 estimated_time: estimatedTime,
