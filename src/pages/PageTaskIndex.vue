@@ -12,7 +12,7 @@ export default {
 
     methods: {
         getUserTask() {
-            axios.get(`http://127.0.0.1:8000/api/tasks`)
+            axios.get(`http://127.0.0.1:8000/api/tasks/index`)
                 .then((response) => {
                     console.log('Task recuperate correttamente');
                     console.log(response);
