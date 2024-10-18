@@ -8,7 +8,74 @@ export default {
             userName: "",
             userSurname: "",
             userPassword: "",
+            userPasswordConfirmation: "",
+            errors: {},
         };
+    },
+
+    methods: {
+        validateInput() {
+            this.errors = {};
+
+            // Email Validator
+            if (!this.userEmail) {
+                this.errors.email = "L'indirizzo email è obbligatorio";
+            } else if (!this.isValidEmail(this.userEmail)) {
+                this.errors.email = "Inserisci un indirizzo email valido";
+            }
+
+            // User Name Validator
+            if (!this.userName) {
+                this.errors.name = "Il nome è obbligatorio";
+            } else if (this.userName.length < 3 || this.userName.length > 50) {
+                this.errors.name = "Il nome deve essere compreso tra 3 e 50 caratteri";
+            }
+
+            // User Surname Validator
+            if (!this.userSurname) {
+                this.errors.surname = "Il cognome è obbligatorio";
+            } else if (this.userSurname.length < 3 || this.userSurname.length > 50) {
+                this.errors.surname = "Il cognome deve essere compreso tra 3 e 50 caratteri";
+            }
+
+            // Password Validator
+            if (!this.userPassword) {
+                this.errors.password = "La password è obbligatoria";
+            } else if (this.userPassword.length < 8) {
+                this.errors.password = "La password deve avere almeno 8 caratteri";
+            }
+
+            // Confirm Password Validator
+            if (this.userPassword !== this.userPasswordConfirmation) {
+                this.errors.password_confirmation = "Le password non corrispondono";
+            }
+
+            return Object.keys(this.errors).length === 0;
+        },
+
+        isValidEmail(email) {
+            const regex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+            return regex.test(email);
+        },
+
+        clearValidationMessage(field) {
+            this.errors[field] = "";
+        },
+
+        createNewUser(event) {
+            event.preventDefault();
+
+            if (!this.validateInput()) {
+                return; // Stop the request if the validation fails
+            }
+
+            axios.post("http://127.0.0.1:8000/api/register", this.signInForm)
+                .then((response) => {
+                    console.log(response);
+                }).catch((error) => {
+                    console.log(error.response);
+                });
+        }
     },
 
     computed: {
@@ -17,22 +84,11 @@ export default {
                 email: this.userEmail,
                 name: this.userName,
                 surname: this.userSurname,
-                password: this.userPassword
+                password: this.userPassword,
+                password_confirmation: this.userPasswordConfirmation
             };
         }
     },
-
-    methods: {
-        createNewUser(event) {
-            event.preventDefault();  
-            axios.post("http://127.0.0.1:8000/api/register", this.signInForm)
-            .then((response) => {
-                console.log(response);
-            }).catch((error) => {
-                console.log(error.response);
-            }); 
-        }
-    }
 };
 </script>
 
@@ -41,34 +97,51 @@ export default {
         <div class="register-container">
             <h1 class="register-title">Create Account</h1>
             <p class="register-subtitle">Join us by creating an account</p>
-            <form @submit.prevent="createNewUser" class="register-form">
-                <div class="form-group">
-                    <label for="registerInputEmail" class="form-label">Email address</label>
-                    <input type="email" class="form-control" id="registerInputEmail" name="email" v-model="userEmail" placeholder="Enter your email">
-                    <div class="form-text">We'll never share your email with anyone else.</div>
+
+            <form @submit.prevent="createNewUser" novalidate>
+                <input type="email" class="form-control" id="exampleInputEmail1" name="email" v-model="userEmail"
+                    @input="clearValidationMessage('email')">
+                <div v-if="errors.email" class="text-danger">{{ errors.email }}</div>
+                <div class="form-text">We'll never share your email with anyone else.</div>
+                <div class="mb-3">
+                    <label for="InputName" class="form-label">Name</label>
+                    <input type="text" class="form-control" id="InputName" name="name" v-model="userName"
+                        @input="clearValidationMessage('name')">
+                    <div v-if="errors.name" class="text-danger">{{ errors.name }}</div>
                 </div>
-                <div class="form-group">
-                    <label for="registerInputName" class="form-label">Name</label>
-                    <input type="text" class="form-control" id="registerInputName" name="name" v-model="userName" placeholder="Enter your name">
+                <div class="mb-3">
+                    <label for="InputSurname" class="form-label">Surname</label>
+                    <input type="text" class="form-control" id="InputSurname" name="surname" v-model="userSurname"
+                        @input="clearValidationMessage('surname')">
+                    <div v-if="errors.surname" class="text-danger">{{ errors.surname }}</div>
                 </div>
-                <div class="form-group">
-                    <label for="registerInputSurname" class="form-label">Surname</label>
-                    <input type="text" class="form-control" id="registerInputSurname" name="surname" v-model="userSurname" placeholder="Enter your surname">
+                <div class="mb-3">
+                    <label for="exampleInputPassword1" class="form-label">Password</label>
+                    <input type="password" class="form-control" id="exampleInputPassword1" name="password"
+                        v-model="userPassword" @input="clearValidationMessage('password')">
+                    <div v-if="errors.password" class="text-danger">{{ errors.password }}</div>
                 </div>
-                <div class="form-group">
-                    <label for="registerInputPassword" class="form-label">Password</label>
-                    <input type="password" class="form-control" id="registerInputPassword" name="password" v-model="userPassword" placeholder="Enter your password">
+                <div class="mb-3">
+                    <label for="exampleInputPassword2" class="form-label">Confirm Password</label>
+                    <input type="password" class="form-control" id="exampleInputPassword2" name="password_confirmation"
+                        v-model="userPasswordConfirmation" @input="clearValidationMessage('password_confirmation')">
+                    <div v-if="errors.password_confirmation" class="text-danger">{{ errors.password_confirmation }}
+                    </div>
                 </div>
-                <button type="submit" class="btn-submit">Submit</button>
+
+                <div v-if="errors.general" class="text-danger">{{ errors.general }}</div>
+
+                <button type="submit" class="btn btn-primary">Submit</button>
             </form>
+
             <div class="register-footer">
-                <p>Already have an account? <router-link :to="{ name: 'login'}">Log in here</router-link></p>
+                <p>Already have an account? <router-link :to="{ name: 'login' }">Log in here</router-link></p>
             </div>
         </div>
     </div>
 </template>
 
-<style scoped>
+<style scoped lang="scss">
 .register-page {
     display: flex;
     justify-content: center;
