@@ -25,7 +25,7 @@ export default {
     methods: {
         createNewUser(event) {
             event.preventDefault();  
-            axios.post("http://127.0.0.1:8000/api/sign-in", this.signInForm)
+            axios.post("http://127.0.0.1:8000/api/register", this.signInForm)
             .then((response) => {
                 console.log(response);
             }).catch((error) => {

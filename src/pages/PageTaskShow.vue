@@ -15,7 +15,7 @@ export default {
         getTaskData() {
             const task_id = this.$route.params.id
 
-            axios.get(`http://127.0.0.1:8000/api/tasks/${task_id}`)
+            axios.get(`http://127.0.0.1:8000/api/tasks/${task_id}/show`)
                 .then((response) => {
                     // console.log('task recuperata con successo')
                     this.task = response.data.task
@@ -24,7 +24,7 @@ export default {
         },
 
         modifyTaskStatus(status_id, task_id) {
-            axios.patch(`http://127.0.0.1:8000/api/tasks/${task_id}`, {
+            axios.patch(`http://127.0.0.1:8000/api/tasks/${task_id}/status`, {
                 'status_id': status_id,
                 'task_id': task_id
             })
@@ -91,7 +91,7 @@ export default {
                         <button class="btn btn-complete" @click="modifyTaskStatus(3, task.id)">Completa Task</button>
 
                         <button class="btn btn-tertiary">
-                            <RouterLink :to="{name: 'create.new.moment', params:{id: task.id}}">Aggiungi un Momento</RouterLink>
+                            <RouterLink :to="{name: 'moments.create', params:{id: task.id}}">Aggiungi un Momento</RouterLink>
                         </button>
                     </div>
                 </div>

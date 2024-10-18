@@ -50,7 +50,7 @@ export default {
                                     <router-link class="nav-link" :to="{ name: 'dashboard'}">Dashboard</router-link>
                                 </li>
                                 <li class="nav-item">
-                                    <router-link class="nav-link" :to="{ name: 'user.task.list'}">Lista Task</router-link>
+                                    <router-link class="nav-link" :to="{ name: 'tasks.index'}">Lista Task</router-link>
                                 </li>
                             </ul>
                             <div class="d-flex align-items-center">
@@ -70,7 +70,7 @@ export default {
                                             <router-link class="dropdown-item" :to="{ name: 'login'}">Login</router-link>
                                         </li>
                                         <li v-if="!isAuthenticated">
-                                            <router-link class="dropdown-item" :to="{ name: 'signin'}">Registrati</router-link>
+                                            <router-link class="dropdown-item" :to="{ name: 'register'}">Registrati</router-link>
                                         </li>
                                     </ul>
                                 </div>
