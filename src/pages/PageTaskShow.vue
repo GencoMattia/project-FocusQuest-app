@@ -91,7 +91,7 @@ export default {
                         <button class="btn btn-complete" @click="modifyTaskStatus(3, task.id)">Completa Task</button>
 
                         <button class="btn btn-tertiary">
-                            <RouterLink :to="{name: 'create.new.moment', params:{id: task.id}}">Aggiungi un Momento</RouterLink>
+                            <RouterLink :to="{name: 'moments.create', params:{id: task.id}}">Aggiungi un Momento</RouterLink>
                         </button>
                     </div>
                 </div>

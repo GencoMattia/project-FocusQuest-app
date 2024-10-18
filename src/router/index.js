@@ -24,8 +24,8 @@ const router = createRouter({
       component: PageLogin
     },
     {
-      path: '/sign-in',
-      name: 'signin',
+      path: '/register',
+      name: 'register',
       component: PageSignIn
     },
     {
@@ -35,32 +35,32 @@ const router = createRouter({
       meta: { requireAuth: true },
     },
     {
-      path: '/profile/:nameSurname',
+      path: '/profile/:name',
       name: 'profile',
       component: PageProfile,
       meta: { requireAuth: true },
     },
     {
-      path: '/create-new-task',
-      name: "create.new.task",
-      component: CreateNewTask,
-      meta: {requireAuth: true}
-    },
-    {
       path: '/tasks',
-      name: "user.task.list",
+      name: "tasks.index",
       component: PageTaskIndex,
       meta: {requireAuth: true}
     },
     {
+      path: '/tasks/new',
+      name: "tasks.create",
+      component: CreateNewTask,
+      meta: {requireAuth: true}
+    },
+    {
       path: '/tasks/:id',
-      name: 'show.task',
+      name: 'tasks.show',
       component: PageTaskShow,
       meta: {requireAuth: true}
     },
     {
-      path: '/tasks/:id/create-new-moment',
-      name: "create.new.moment",
+      path: '/tasks/:id/moments/new',
+      name: "moments.create",
       component: CreateNewMoment,
       meta: {requireAuth: true},
     }

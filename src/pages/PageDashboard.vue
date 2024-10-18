@@ -146,7 +146,7 @@ export default {
                     <div class="card-body text-center">
                         <h5 class="card-title">➕ Nuova Task</h5>
                         <p class="card-text">Crea una nuova task da zero.</p>
-                        <router-link :to="{ name: 'create.new.task' }" class="btn btn-outline-primary">Crea Task</router-link>
+                        <router-link :to="{ name: 'tasks.create' }" class="btn btn-outline-primary">Crea Task</router-link>
                     </div>
                 </div>
             </div>

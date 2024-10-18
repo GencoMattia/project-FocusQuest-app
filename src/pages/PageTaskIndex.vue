@@ -26,7 +26,7 @@ export default {
 
         showTask(id) {
             console.log('id della task:', id)
-            this.$router.push({ name: 'show.task', params: { id: id } });
+            this.$router.push({ name: 'tasks.show', params: { id: id } });
         }
 
     },
@@ -39,7 +39,7 @@ export default {
 
 <template>
     <h1>ciao sono nella task list di </h1>
-    <router-link :to="{ name: 'create.new.task' }">Aggiungi una nuova task</router-link>
+    <router-link :to="{ name: 'tasks.create' }">Aggiungi una nuova task</router-link>
     <div v-if="tasks">
         <table class="table">
             <thead>
