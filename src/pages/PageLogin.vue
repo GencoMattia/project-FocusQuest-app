@@ -38,6 +38,21 @@ export default {
             return regex.test(email);
         },
 
+        // Custom HTML validation messages
+        validateNativeEmail(event) {
+            const emailInput = event.target;
+
+            if (emailInput.validity.valueMissing) {
+                emailInput.setCustomValidity("L'indirizzo email è obbligatorio");
+            } else if (emailInput.validity.typeMismatch) {
+                emailInput.setCustomValidity("Inserisci un indirizzo email valido");
+            } else {
+                emailInput.setCustomValidity("");
+            }
+
+            emailInput.reportValidity();
+        },
+
         logInUser(event) {
             event.preventDefault();
 
@@ -80,28 +95,47 @@ export default {
             <h1 class="login-title">Welcome Back</h1>
             <p class="login-subtitle">Please sign in to continue</p>
             <form @submit.prevent="logInUser" class="login-form">
+                <!-- Input Email -->
                 <div class="form-group">
                     <label for="loginInputEmail" class="form-label">Email address</label>
-                    <input v-model="userEmail" type="email" class="form-control" id="loginInputEmail" placeholder="Enter your email">
+                    <input 
+                    v-model="userEmail" 
+                    type="text" 
+                    class="form-control" 
+                    id="loginInputEmail" 
+                    placeholder="Enter your email"
+                    @input="validateNativeEmail"
+                    required>
                     <!-- Show email error -->
                     <div v-if="errors.email" class="error-message">{{ errors.email }}</div>
                 </div>
+
+                <!-- Input Password -->
                 <div class="form-group">
                     <label for="loginInputPassword" class="form-label">Password</label>
-                    <input v-model="userPassword" type="password" class="form-control" id="loginInputPassword" placeholder="Enter your password">
+                    <input 
+                    v-model="userPassword" 
+                    type="password" 
+                    class="form-control" 
+                    id="loginInputPassword" 
+                    placeholder="Enter your password"
+                    required>
                     <!-- Show password error -->
                     <div v-if="errors.password" class="error-message">{{ errors.password }}</div>
                 </div>
+
                 <!-- Show generic error -->
                 <div v-if="errors.server" class="error-message">{{ errors.server }}</div>
-                <div class="form-group form-check">
+
+                <!-- <div class="form-group form-check">
                     <input type="checkbox" class="form-check-input" id="loginCheck">
                     <label class="form-check-label" for="loginCheck">Remember me</label>
-                </div>
+                </div> -->
+
                 <button type="submit" class="btn-submit">Sign In</button>
             </form>
             <div class="login-footer">
-                <p>Don't have an account? <a href="/sign-up">Sign up here</a></p>
+                <p>Don't have an account? <router-link :to="{ name: 'register'}">Sign up here</router-link></p>
             </div>
         </div>
     </div>
