@@ -6,13 +6,45 @@ export default {
         return {
             userEmail: "",
             userPassword: "",
-            store
+            store,
+            errors: {},
         };
     },
 
     methods: {
+        validateInput() {
+            this.errors = {};
+
+            //Email Validator
+            if (!this.userEmail) {
+                this.errors.email = "L'indirizzo email è obbligatorio";
+            } else if(!this.isValidEmail(this.userEmail)) {
+                this.errors.email = "Inserisci un indirizzo email valido";
+            }
+
+            //Password Validator
+            if (!this.userPassword) {
+                this.errors.password = "La password è obbligatoria";
+            } else if (this.userPassword.length < 8) {
+                this.errors.password = "La password deve essere lunga almeno 8 caratteri";
+            }
+
+            //If there are any errors return false, otherwise return true
+            return Object.keys(this.errors).length === 0;
+        },
+
+        isValidEmail(email) {
+            const regex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+            return regex.test(email);
+        },
+
         logInUser(event) {
             event.preventDefault();
+
+            if (!this.validateInput()) {
+                return; //Stop the request if the validation fails
+            }
+
             axios.post("http://127.0.0.1:8000/api/auth/login", {
                 email: this.userEmail,
                 password: this.userPassword
@@ -21,19 +53,19 @@ export default {
                     localStorage.setItem("token", response.data.access_token);
                     console.log(response);
 
-                    console.log('logged user prima')
-                    console.log(this.store.loggedUser)
-                    
-                    console.log('logged user dopo')
-                    //Aggiorno i dati dello store.js
+                    //Update store.js data
                     this.store.loggedUser.name = response.data.name
                     this.store.loggedUser.surname = response.data.surname
                     this.store.loggedUser.email = response.data.user.email
                     this.store.loggedUser.id = response.data.user.id
 
-                    console.log(this.store.loggedUser)
+                    //Redirect to Dashboard page
                     this.$router.push("/dashboard");
                 }).catch((error) => {
+                    if (error.response && error.response.data) {
+                        this.errors.server = "Email o password errati";
+                    }
+
                     console.log("Login Error:", error.response.data);
                 });
         }
@@ -51,11 +83,17 @@ export default {
                 <div class="form-group">
                     <label for="loginInputEmail" class="form-label">Email address</label>
                     <input v-model="userEmail" type="email" class="form-control" id="loginInputEmail" placeholder="Enter your email">
+                    <!-- Show email error -->
+                    <div v-if="errors.email" class="error-message">{{ errors.email }}</div>
                 </div>
                 <div class="form-group">
                     <label for="loginInputPassword" class="form-label">Password</label>
                     <input v-model="userPassword" type="password" class="form-control" id="loginInputPassword" placeholder="Enter your password">
+                    <!-- Show password error -->
+                    <div v-if="errors.password" class="error-message">{{ errors.password }}</div>
                 </div>
+                <!-- Show generic error -->
+                <div v-if="errors.server" class="error-message">{{ errors.server }}</div>
                 <div class="form-group form-check">
                     <input type="checkbox" class="form-check-input" id="loginCheck">
                     <label class="form-check-label" for="loginCheck">Remember me</label>
@@ -147,5 +185,10 @@ export default {
 
 .login-footer a:hover {
     text-decoration: underline;
+}
+
+.error-message {
+    color: red;
+    font-size: 0.9rem;
 }
 </style>
