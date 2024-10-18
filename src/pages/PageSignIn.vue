@@ -73,6 +73,10 @@ export default {
                 .then((response) => {
                     console.log(response);
                 }).catch((error) => {
+                    if (error.response && error.response.data) {
+                        this.errors.server = "Registrazione Utente non riuscita";
+                    }
+
                     console.log(error.response);
                 });
         }
@@ -129,7 +133,7 @@ export default {
                     </div>
                 </div>
 
-                <div v-if="errors.general" class="text-danger">{{ errors.general }}</div>
+                <div v-if="errors.general" class="text-danger">{{ errors.server }}</div>
 
                 <button type="submit" class="btn btn-primary">Submit</button>
             </form>
