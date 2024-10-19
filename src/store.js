@@ -6,5 +6,6 @@ export const store = reactive ({
         name: "",
         surname: "",
         email: "",
-    }
+    },
+    selected_task_id: null,
 });

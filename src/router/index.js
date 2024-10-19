@@ -6,6 +6,8 @@ import PageSignIn from '@/pages/PageSignIn.vue'
 import CreateNewTask from '@/pages/CreateNewTask.vue'
 import { createRouter, createWebHistory } from 'vue-router'
 import PageTaskIndex from '@/pages/PageTaskIndex.vue'
+import CreateNewMoment from '@/pages/CreateNewMoment.vue'
+import PageTaskShow from '@/pages/PageTaskShow.vue'
 
 
 const router = createRouter({
@@ -22,8 +24,8 @@ const router = createRouter({
       component: PageLogin
     },
     {
-      path: '/sign-in',
-      name: 'signin',
+      path: '/register',
+      name: 'register',
       component: PageSignIn
     },
     {
@@ -33,22 +35,34 @@ const router = createRouter({
       meta: { requireAuth: true },
     },
     {
-      path: '/profile/:nameSurname',
+      path: '/profile/:name',
       name: 'profile',
       component: PageProfile,
       meta: { requireAuth: true },
     },
     {
-      path: '/create-new-task',
-      name: "create.new.task",
+      path: '/tasks',
+      name: "tasks.index",
+      component: PageTaskIndex,
+      meta: {requireAuth: true}
+    },
+    {
+      path: '/tasks/new',
+      name: "tasks.create",
       component: CreateNewTask,
       meta: {requireAuth: true}
     },
     {
-      path: '/tasks',
-      name: "user.task.list",
-      component: PageTaskIndex,
+      path: '/tasks/:id',
+      name: 'tasks.show',
+      component: PageTaskShow,
       meta: {requireAuth: true}
+    },
+    {
+      path: '/tasks/:id/moments/new',
+      name: "moments.create",
+      component: CreateNewMoment,
+      meta: {requireAuth: true},
     }
   ]
 });
