@@ -27,11 +27,11 @@ export default {
             in_progress_tasks:[],
 
             events: [
-                {
-                    start: '2024-10-19 10:35',
-                    end: '2024-10-19 11:30',
-                    title: 'Doctor appointment'
-                },
+                // {
+                //     start: '2024-10-19 10:35',
+                //     end: '2024-10-19 11:30',
+                //     title: 'Doctor appointment'
+                // },
 
             ]
         };
@@ -44,7 +44,7 @@ export default {
                     // console.log('Task recuperate correttamente');
                     // console.log(response);
                     this.tasks = response.data;
-                    // console.log('queste sono le task', this.tasks)
+                    console.log('queste sono le task', this.tasks)
 
                     this.open_tasks = this.tasks.filter((task) => task.status_id === 1)
                     // console.log('queste sono le open tasks: ', this.open_tasks)
@@ -53,7 +53,7 @@ export default {
                     // console.log('queste sono le in_progress tasks: ', this.in_progress_tasks)
 
                     this.completed_tasks = this.tasks.filter((task) => task.status_id === 3)
-                    // console.log('queste sono le completed tasks: ', this.completed_tasks)
+                    console.log('queste sono le completed tasks: ', this.completed_tasks)
 
                     this.completed_tasks.forEach(task => {
                         // console.log(task.started_at, task.ended_at)
@@ -136,7 +136,7 @@ export default {
 
 
     <vue-cal style="height: 800px" 
-    :time-from="8 * 60" 
+    
     :time-to="23 * 60" 
     :events="events" 
     editable-events />
