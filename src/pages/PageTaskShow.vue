@@ -27,7 +27,7 @@ export default {
                     // console.log('task recuperata con successo')
                     this.task = response.data.task
                     this.moments = this.task.moments
-                    // console.log('task visualizzata:', this.task)
+                    console.log('task visualizzata:', this.task)
                     console.log('Questi sono i momenti associati alla task', this.moments)
                     console.log('questi sono le props da trasmettere al componente', this.moment_card_data)
                 })
