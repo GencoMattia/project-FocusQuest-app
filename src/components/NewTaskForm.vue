@@ -13,7 +13,8 @@ export default {
                 formHours: 0,
                 formMinutes: 0,
                 formCategoryId: 0,
-                formPriorityId: 0
+                formPriorityId: 0,
+                formDeadline: "",
             },
 
             suggestedTasks: [],
@@ -92,6 +93,7 @@ export default {
                 estimated_time: estimatedTime,
                 category_id: this.data.formCategoryId,
                 priority_id: this.data.formPriorityId,
+                deadline: this.data.formDeadline,
             })
                 .then((response) => {
                     console.log('Task created successfully:', response.data);
@@ -115,6 +117,7 @@ export default {
             this.data.formMinutes = 0;
             this.data.formCategoryId = 0;
             this.data.formPriorityId = 0;
+            this.data.formDeadline = "";
             this.suggestedTasks = [];
             this.showDropdown = false;
         }
@@ -188,6 +191,16 @@ export default {
                     placeholder="0" 
                     required>
             </div>
+        </div>
+
+        <div class="mb-3">
+            <label for="form-deadline" class="form-label">Deadline</label>
+            <input 
+                type="date" 
+                v-model="data.formDeadline" 
+                id="form-deadline" 
+                name="deadline" 
+                class="form-control styled-input">
         </div>
 
         <div class="mb-3">
