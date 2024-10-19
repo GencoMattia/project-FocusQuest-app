@@ -6,13 +6,60 @@ export default {
         return {
             userEmail: "",
             userPassword: "",
-            store
+            store,
+            errors: {},
         };
     },
 
     methods: {
+        validateInput() {
+            this.errors = {};
+
+            //Email Validator
+            if (!this.userEmail) {
+                this.errors.email = "L'indirizzo email è obbligatorio";
+            } else if(!this.isValidEmail(this.userEmail)) {
+                this.errors.email = "Inserisci un indirizzo email valido";
+            }
+
+            //Password Validator
+            if (!this.userPassword) {
+                this.errors.password = "La password è obbligatoria";
+            } else if (this.userPassword.length < 8) {
+                this.errors.password = "La password deve essere lunga almeno 8 caratteri";
+            }
+
+            //If there are any errors return false, otherwise return true
+            return Object.keys(this.errors).length === 0;
+        },
+
+        isValidEmail(email) {
+            const regex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+            return regex.test(email);
+        },
+
+        // Custom HTML validation messages
+        validateNativeEmail(event) {
+            const emailInput = event.target;
+
+            if (emailInput.validity.valueMissing) {
+                emailInput.setCustomValidity("L'indirizzo email è obbligatorio");
+            } else if (emailInput.validity.typeMismatch) {
+                emailInput.setCustomValidity("Inserisci un indirizzo email valido");
+            } else {
+                emailInput.setCustomValidity("");
+            }
+
+            emailInput.reportValidity();
+        },
+
         logInUser(event) {
             event.preventDefault();
+
+            if (!this.validateInput()) {
+                return; //Stop the request if the validation fails
+            }
+
             axios.post("http://127.0.0.1:8000/api/auth/login", {
                 email: this.userEmail,
                 password: this.userPassword
@@ -21,19 +68,19 @@ export default {
                     localStorage.setItem("token", response.data.access_token);
                     console.log(response);
 
-                    console.log('logged user prima')
-                    console.log(this.store.loggedUser)
-                    
-                    console.log('logged user dopo')
-                    //Aggiorno i dati dello store.js
+                    //Update store.js data
                     this.store.loggedUser.name = response.data.name
                     this.store.loggedUser.surname = response.data.surname
                     this.store.loggedUser.email = response.data.user.email
                     this.store.loggedUser.id = response.data.user.id
 
-                    console.log(this.store.loggedUser)
+                    //Redirect to Dashboard page
                     this.$router.push("/dashboard");
                 }).catch((error) => {
+                    if (error.response && error.response.data) {
+                        this.errors.server = "Email o password errati";
+                    }
+
                     console.log("Login Error:", error.response.data);
                 });
         }
@@ -48,22 +95,47 @@ export default {
             <h1 class="login-title">Welcome Back</h1>
             <p class="login-subtitle">Please sign in to continue</p>
             <form @submit.prevent="logInUser" class="login-form">
+                <!-- Input Email -->
                 <div class="form-group">
                     <label for="loginInputEmail" class="form-label">Email address</label>
-                    <input v-model="userEmail" type="email" class="form-control" id="loginInputEmail" placeholder="Enter your email">
+                    <input 
+                    v-model="userEmail" 
+                    type="text" 
+                    class="form-control" 
+                    id="loginInputEmail" 
+                    placeholder="Enter your email"
+                    @input="validateNativeEmail"
+                    required>
+                    <!-- Show email error -->
+                    <div v-if="errors.email" class="error-message">{{ errors.email }}</div>
                 </div>
+
+                <!-- Input Password -->
                 <div class="form-group">
                     <label for="loginInputPassword" class="form-label">Password</label>
-                    <input v-model="userPassword" type="password" class="form-control" id="loginInputPassword" placeholder="Enter your password">
+                    <input 
+                    v-model="userPassword" 
+                    type="password" 
+                    class="form-control" 
+                    id="loginInputPassword" 
+                    placeholder="Enter your password"
+                    required>
+                    <!-- Show password error -->
+                    <div v-if="errors.password" class="error-message">{{ errors.password }}</div>
                 </div>
-                <div class="form-group form-check">
+
+                <!-- Show generic error -->
+                <div v-if="errors.server" class="error-message">{{ errors.server }}</div>
+
+                <!-- <div class="form-group form-check">
                     <input type="checkbox" class="form-check-input" id="loginCheck">
                     <label class="form-check-label" for="loginCheck">Remember me</label>
-                </div>
+                </div> -->
+
                 <button type="submit" class="btn-submit">Sign In</button>
             </form>
             <div class="login-footer">
-                <p>Don't have an account? <a href="/sign-up">Sign up here</a></p>
+                <p>Don't have an account? <router-link :to="{ name: 'register'}">Sign up here</router-link></p>
             </div>
         </div>
     </div>
@@ -147,5 +219,10 @@ export default {
 
 .login-footer a:hover {
     text-decoration: underline;
+}
+
+.error-message {
+    color: red;
+    font-size: 0.9rem;
 }
 </style>
