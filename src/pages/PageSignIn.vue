@@ -72,8 +72,13 @@ export default {
             axios.post("http://127.0.0.1:8000/api/register", this.signInForm)
                 .then((response) => {
                     console.log(response);
-                }).catch((error) => {
-                    if (error.response && error.response.data) {
+                })
+                .catch((error) => {
+                    if (error.response && error.response.data.errors) {
+                        Object.keys(error.response.data.errors).forEach(field => {
+                            this.errors[field] = error.response.data.errors[field][0];
+                        });
+                    } else {
                         this.errors.server = "Registrazione Utente non riuscita";
                     }
 
@@ -103,37 +108,50 @@ export default {
             <p class="register-subtitle">Join us by creating an account</p>
 
             <form @submit.prevent="createNewUser" novalidate>
-                <input type="email" class="form-control" id="exampleInputEmail1" name="email" v-model="userEmail"
-                    @input="clearValidationMessage('email')">
-                <div v-if="errors.email" class="text-danger">{{ errors.email }}</div>
-                <div class="form-text">We'll never share your email with anyone else.</div>
+                <div class="mb-3">
+                    <label for="exampleInputEmail1" class="form-label">Email address</label>
+                    <input type="email" class="form-control" id="exampleInputEmail1" name="email" v-model="userEmail"
+                        @input="clearValidationMessage('email')">
+                    <div v-if="errors.email" class="text-danger">
+                        {{ Array.isArray(errors.email) ? errors.email[0] : errors.email }}
+                    </div>
+                    <div class="form-text">We'll never share your email with anyone else.</div>
+                </div>
                 <div class="mb-3">
                     <label for="InputName" class="form-label">Name</label>
                     <input type="text" class="form-control" id="InputName" name="name" v-model="userName"
                         @input="clearValidationMessage('name')">
-                    <div v-if="errors.name" class="text-danger">{{ errors.name }}</div>
+                    <div v-if="errors.name" class="text-danger">
+                        {{ Array.isArray(errors.name) ? errors.name[0] : errors.name }}
+                    </div>
                 </div>
                 <div class="mb-3">
                     <label for="InputSurname" class="form-label">Surname</label>
                     <input type="text" class="form-control" id="InputSurname" name="surname" v-model="userSurname"
                         @input="clearValidationMessage('surname')">
-                    <div v-if="errors.surname" class="text-danger">{{ errors.surname }}</div>
+                    <div v-if="errors.surname" class="text-danger">
+                        {{ Array.isArray(errors.surname) ? errors.surname[0] : errors.surname }}
+                    </div>
                 </div>
                 <div class="mb-3">
                     <label for="exampleInputPassword1" class="form-label">Password</label>
                     <input type="password" class="form-control" id="exampleInputPassword1" name="password"
                         v-model="userPassword" @input="clearValidationMessage('password')">
-                    <div v-if="errors.password" class="text-danger">{{ errors.password }}</div>
+                    <div v-if="errors.password" class="text-danger">
+                        {{ Array.isArray(errors.password) ? errors.password[0] : errors.password }}
+                    </div>
                 </div>
                 <div class="mb-3">
                     <label for="exampleInputPassword2" class="form-label">Confirm Password</label>
                     <input type="password" class="form-control" id="exampleInputPassword2" name="password_confirmation"
                         v-model="userPasswordConfirmation" @input="clearValidationMessage('password_confirmation')">
-                    <div v-if="errors.password_confirmation" class="text-danger">{{ errors.password_confirmation }}
+                    <div v-if="errors.password_confirmation" class="text-danger">
+                        {{ Array.isArray(errors.password_confirmation) ? errors.password_confirmation[0] :
+                            errors.password_confirmation }}
                     </div>
                 </div>
 
-                <div v-if="errors.general" class="text-danger">{{ errors.server }}</div>
+                <div v-if="errors.server" class="text-danger">{{ errors.server }}</div>
 
                 <button type="submit" class="btn btn-primary">Submit</button>
             </form>
