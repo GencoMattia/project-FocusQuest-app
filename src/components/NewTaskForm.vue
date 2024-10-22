@@ -113,10 +113,10 @@ export default {
             }
         },
 
-        handleInput(value) {
-            this.getSuggestedTasks();
-            this.clearValidationMessage(value);
-        },
+        // handleInput(value) {
+        //     this.getSuggestedTasks();
+        //     this.clearValidationMessage(value);
+        // },
 
         async createNewTask(event) {
             event.preventDefault();
@@ -160,7 +160,7 @@ export default {
             this.data.formDeadline = "";
             this.suggestedTasks = [];
             this.showDropdown = false;
-        }
+        },
     },
 
     mounted() {
@@ -176,7 +176,7 @@ export default {
             <input 
             type="text" 
             v-model="data.formName" 
-            @input="handleInput('name')" 
+            @input="(getSuggestedTask(), clearValidationMessage('name'))" 
             class="form-control styled-input"
             id="form-name" 
             name="name" 
@@ -205,7 +205,7 @@ export default {
             id="form-description"
             name="description" 
             placeholder="Enter task description"
-            @input="handleInput('description')">
+            @input="clearValidationMessage('description')">
             </textarea>
 
             <!-- Show description error -->
@@ -238,7 +238,7 @@ export default {
                 class="styled-input" 
                 placeholder="0" 
                 required
-                @input="handleInput('minutes')">
+                @input="clearValidationMessage('estimatedTime')">
             </div>
 
             <!-- Show estimatedTime error -->
@@ -416,5 +416,10 @@ textarea {
     &:hover {
         background-color: #5a6268;
     }
+}
+
+.error-message {
+    color: red;
+    font-size: 0.9rem;
 }
 </style>
