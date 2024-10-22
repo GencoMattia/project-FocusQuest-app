@@ -33,6 +33,13 @@ $box-shadow: 0 0.125rem 0.25rem rgba(0, 0, 0, 0.075); // Standard box shadow
 // General sizes
 $btn-font-size: 1rem; // Font size for buttons
 
+$pastel-primary: #a3d8f4;
+$pastel-secondary: #fdf5e6;
+$light-pastel: #f8e0dc;
+$pastel-accent: #9af3ff;
+$dark-text: #4a4a4a;
+$light-text: #fff;
+
 @import "../../../node_modules/bootswatch/dist/morph/variables";
 @import "../../../node_modules/bootstrap/scss/bootstrap.scss";
 @import "../../../node_modules/bootswatch/dist/morph/bootswatch";
