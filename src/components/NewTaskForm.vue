@@ -20,12 +20,14 @@ export default {
             suggestedTasks: [],
             showDropdown: false,
             taskSelected: false,
+
+            errors: {},
         }
     },
 
     watch: {
         "data.formName": function (newVal) {
-            if(this.taskSelected) {
+            if (this.taskSelected) {
                 this.taskSelected = false;
                 return;
             }
@@ -40,6 +42,34 @@ export default {
     },
 
     methods: {
+        validateInput() {
+            this.errors = {};
+
+            // Task's name validator
+            if (!this.data.formName) {
+                this.errors.name = "Ogni task deve avere un nome"
+            } else if (this.data.formName.length < 3 || this.data.formName.length > 150) {
+                this.errors.name = "Il nome della task deve essere compreso tra 3 e 150 caratteri"
+            }
+
+            // Task's description validator
+            if (this.data.formDescription.length > 300) {
+                this.errors.description = "La descrizione deve essere inferiore ai 300 caratteri"
+            }
+
+            // Task's estimated_time validator
+            if (this.data.formMinutes < 1) {
+                this.errors.estimatedTime = "Il tempo stimato deve essere di almeno 1 minuto"
+            }
+
+            //If there are any errors return false, otherwise return true
+            return Object.keys(this.errors).length === 0;
+        },
+
+        clearValidationMessage(field) {
+            this.errors[field] = "";
+        },
+
         fillForm(task) {
             this.data.formName = task.name;
             this.data.formDescription = task.description;
@@ -47,7 +77,7 @@ export default {
             this.data.formMinutes = task.estimated_time % 60;
             this.data.formCategoryId = task.category_id;
             this.data.formPriorityId = task.priority_id;
-            
+
             this.taskSelected = true;
             this.showDropdown = false;
         },
@@ -83,10 +113,19 @@ export default {
             }
         },
 
+        handleInput(value) {
+            this.getSuggestedTasks();
+            this.clearValidationMessage(value);
+        },
+
         async createNewTask(event) {
+            event.preventDefault();
+            if (!this.validateInput()) {
+                return; // Stop the request if the validation fails
+            }
+
             const estimatedTime = this.getTotalMinutes(this.data.formHours, this.data.formMinutes);
 
-            event.preventDefault();
             axios.post('http://localhost:8000/api/tasks/create', {
                 name: this.data.formName,
                 description: this.data.formDescription,
@@ -100,7 +139,8 @@ export default {
                     this.resetForm();
                 })
                 .catch((error) => {
-                    if (error.response) {
+                    if (error.response && error.response.data) {
+                        this.errors.server = "La Creazione della Task non è andata a buon fine";
                         console.error('Server response:', error.response.data);
                     } else if (error.request) {
                         console.error('No response received:', error.request);
@@ -134,20 +174,22 @@ export default {
         <div class="mb-3">
             <label for="form-name" class="form-label">Task Name</label>
             <input 
-                type="text" 
-                v-model="data.formName" 
-                @input="getSuggestedTasks" 
-                class="form-control styled-input" 
-                id="form-name" 
-                name="name" 
-                placeholder="Enter task name">
+            type="text" 
+            v-model="data.formName" 
+            @input="handleInput('name')" 
+            class="form-control styled-input"
+            id="form-name" 
+            name="name" 
+            placeholder="Enter task name">
+
+            <!-- Show name error -->
+            <div v-if="errors.name" class="error-message">
+                {{ errors.name }}
+            </div>
 
             <!-- Suggestions Dropdown -->
             <ul v-if="showDropdown" class="dropdown suggestions-list">
-                <li 
-                    v-for="task in suggestedTasks" 
-                    :key="task.id" 
-                    @click="fillForm(task)" 
+                <li v-for="task in suggestedTasks" :key="task.id" @click="fillForm(task)"
                     class="suggestion-item button-like">
                     {{ task.name }}
                 </li>
@@ -158,62 +200,63 @@ export default {
         <div class="mb-3">
             <label for="form-description" class="form-label">Description</label>
             <textarea 
-                v-model="data.formDescription" 
-                class="form-control styled-input" 
-                id="form-description" 
-                name="description" 
-                placeholder="Enter task description">
+            v-model="data.formDescription" 
+            class="form-control styled-input" 
+            id="form-description"
+            name="description" 
+            placeholder="Enter task description"
+            @input="handleInput('description')">
             </textarea>
+
+            <!-- Show description error -->
+            <div v-if="errors.description" class="error-message">
+                {{ errors.description }}
+            </div>
         </div>
 
         <div class="mb-3 time-inputs">
             <div class="input-wrapper">
                 <label for="form-hours">Hours:</label>
                 <input 
-                    type="number" 
-                    v-model="data.formHours" 
-                    id="form-hours" 
-                    name="hours" 
-                    min="0" 
-                    class="styled-input" 
-                    placeholder="0">
+                type="number" 
+                v-model="data.formHours" 
+                id="form-hours" 
+                name="hours" 
+                min="0" 
+                class="styled-input"
+                placeholder="0">
             </div>
             <div class="input-wrapper">
                 <label for="form-minutes">Minutes:</label>
                 <input 
-                    type="number" 
-                    v-model="data.formMinutes" 
-                    id="form-minutes" 
-                    name="minutes" 
-                    min="0" 
-                    max="59" 
-                    class="styled-input" 
-                    placeholder="0" 
-                    required>
+                type="number" 
+                v-model="data.formMinutes" 
+                id="form-minutes" 
+                name="minutes" 
+                min="0" 
+                max="59"
+                class="styled-input" 
+                placeholder="0" 
+                required
+                @input="handleInput('minutes')">
+            </div>
+
+            <!-- Show estimatedTime error -->
+            <div v-if="errors.estimatedTime" class="error-message">
+                {{ errors.estimatedTime }}
             </div>
         </div>
 
         <div class="mb-3">
             <label for="form-deadline" class="form-label">Deadline</label>
-            <input 
-                type="date" 
-                v-model="data.formDeadline" 
-                id="form-deadline" 
-                name="deadline" 
+            <input type="date" v-model="data.formDeadline" id="form-deadline" name="deadline"
                 class="form-control styled-input">
         </div>
 
         <div class="mb-3">
             <label for="category" class="form-label">Category</label>
-            <select 
-                name="category" 
-                v-model="data.formCategoryId" 
-                id="form-category" 
-                class="form-control styled-select">
-                <option 
-                    v-for="(category, index) in categories" 
-                    :key="index" 
-                    :value="category.id">
+            <select name="category" v-model="data.formCategoryId" id="form-category" class="form-control styled-select">
+                <option v-for="(category, index) in categories" :key="index" :value="category.id">
                     {{ category.name }}
                 </option>
             </select>
@@ -221,15 +264,8 @@ export default {
 
         <div class="mb-3">
             <label for="priority" class="form-label">Priority</label>
-            <select 
-                name="priority" 
-                v-model="data.formPriorityId" 
-                id="form-priority" 
-                class="form-control styled-select">
-                <option 
-                    v-for="(priority, index) in priorities" 
-                    :key="index" 
-                    :value="priority.id">
+            <select name="priority" v-model="data.formPriorityId" id="form-priority" class="form-control styled-select">
+                <option v-for="(priority, index) in priorities" :key="index" :value="priority.id">
                     {{ priority.name }}
                 </option>
             </select>
@@ -237,15 +273,10 @@ export default {
 
         <!-- Buttons for Submit and Reset -->
         <div class="button-group">
-            <button 
-                type="submit" 
-                class="btn btn-primary styled-button submit-button">
+            <button type="submit" class="btn btn-primary styled-button submit-button">
                 Submit
             </button>
-            <button 
-                type="button" 
-                @click="resetForm" 
-                class="btn btn-secondary styled-button reset-button">
+            <button type="button" @click="resetForm" class="btn btn-secondary styled-button reset-button">
                 Reset
             </button>
         </div>
@@ -277,6 +308,7 @@ export default {
     font-size: 16px;
     margin-bottom: 15px;
     transition: border-color 0.3s ease;
+
     &:focus {
         border-color: #007bff;
         outline: none;
@@ -332,6 +364,7 @@ textarea {
     border-radius: 8px;
     background-color: #e9ecef;
     margin: 5px;
+
     &:hover {
         background-color: #dee2e6;
     }
@@ -344,6 +377,7 @@ textarea {
     background-color: #007bff;
     color: white;
     border-radius: 8px;
+
     &:hover {
         background-color: #0056b3;
     }
@@ -351,9 +385,9 @@ textarea {
 
 .button-group {
     display: flex;
-    justify-content: space-between; 
+    justify-content: space-between;
     gap: 20px;
-    margin-top: 20px; 
+    margin-top: 20px;
 }
 
 .styled-button {
@@ -369,6 +403,7 @@ textarea {
 .submit-button {
     background-color: #007bff;
     color: #fff;
+
     &:hover {
         background-color: #0056b3;
     }
@@ -377,6 +412,7 @@ textarea {
 .reset-button {
     background-color: #6c757d;
     color: #fff;
+
     &:hover {
         background-color: #5a6268;
     }
