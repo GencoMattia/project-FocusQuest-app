@@ -62,6 +62,19 @@ export default {
                 this.errors.estimatedTime = "Il tempo stimato deve essere di almeno 1 minuto"
             }
 
+            // Task's deadline validator
+            if (this.data.formDeadline) {
+                const currentDate = new Date();
+                const deadlineDate = new Date(this.data.formDeadline);
+
+                // remove hours so that only the day it is compared
+                currentDate.setHours(0, 0, 0, 0);
+
+                if (deadlineDate < currentDate) {
+                    this.errors.deadline = "La deadline non può essere precedente ad oggi";
+                }
+            }
+
             //If there are any errors return false, otherwise return true
             return Object.keys(this.errors).length === 0;
         },
@@ -173,14 +186,8 @@ export default {
     <form v-on:submit="createNewTask($event)" class="task-form">
         <div class="mb-3">
             <label for="form-name" class="form-label">Task Name</label>
-            <input 
-            type="text" 
-            v-model="data.formName" 
-            @input="(getSuggestedTask(), clearValidationMessage('name'))" 
-            class="form-control styled-input"
-            id="form-name" 
-            name="name" 
-            placeholder="Enter task name">
+            <input type="text" v-model="data.formName" @input="(getSuggestedTask(), clearValidationMessage('name'))"
+                class="form-control styled-input" id="form-name" name="name" placeholder="Enter task name">
 
             <!-- Show name error -->
             <div v-if="errors.name" class="error-message">
@@ -199,13 +206,8 @@ export default {
 
         <div class="mb-3">
             <label for="form-description" class="form-label">Description</label>
-            <textarea 
-            v-model="data.formDescription" 
-            class="form-control styled-input" 
-            id="form-description"
-            name="description" 
-            placeholder="Enter task description"
-            @input="clearValidationMessage('description')">
+            <textarea v-model="data.formDescription" class="form-control styled-input" id="form-description"
+                name="description" placeholder="Enter task description" @input="clearValidationMessage('description')">
             </textarea>
 
             <!-- Show description error -->
@@ -217,28 +219,13 @@ export default {
         <div class="mb-3 time-inputs">
             <div class="input-wrapper">
                 <label for="form-hours">Hours:</label>
-                <input 
-                type="number" 
-                v-model="data.formHours" 
-                id="form-hours" 
-                name="hours" 
-                min="0" 
-                class="styled-input"
-                placeholder="0">
+                <input type="number" v-model="data.formHours" id="form-hours" name="hours" min="0" class="styled-input"
+                    placeholder="0">
             </div>
             <div class="input-wrapper">
                 <label for="form-minutes">Minutes:</label>
-                <input 
-                type="number" 
-                v-model="data.formMinutes" 
-                id="form-minutes" 
-                name="minutes" 
-                min="0" 
-                max="59"
-                class="styled-input" 
-                placeholder="0" 
-                required
-                @input="clearValidationMessage('estimatedTime')">
+                <input type="number" v-model="data.formMinutes" id="form-minutes" name="minutes" min="0" max="59"
+                    class="styled-input" placeholder="0" required @input="clearValidationMessage('estimatedTime')">
             </div>
 
             <!-- Show estimatedTime error -->
@@ -249,8 +236,17 @@ export default {
 
         <div class="mb-3">
             <label for="form-deadline" class="form-label">Deadline</label>
-            <input type="date" v-model="data.formDeadline" id="form-deadline" name="deadline"
-                class="form-control styled-input">
+            <input 
+            type="date" 
+            v-model="data.formDeadline" 
+            @input="clearValidationMessage('deadline')"
+            class="form-control styled-input" 
+            id="form-deadline" />
+
+            <!-- Show deadline error -->
+            <div v-if="errors.deadline" class="error-message">
+                {{ errors.deadline }}
+            </div>
         </div>
 
         <div class="mb-3">
