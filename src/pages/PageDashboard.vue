@@ -111,12 +111,12 @@ export default {
                         <h5 class="card-title task-title">🔥 Più Urgente</h5>
                         <p class="card-text">Questa è la tua task più urgente</p>
 
-                        <div class="form-check form-switch mt-3">
-                            <input class="form-check-input pastel-switch" type="checkbox" role="switch" id="taskOrderSwitch"
-                                v-model="isAscending" @change="toggleOrder">
+                        <div class="form-check form-switch d-flex justify-content-evenly mt-3">
                             <label class="form-check-label" for="taskOrderSwitch">
                                 Quanto tempo hai? {{ orderLabel }}
                             </label>
+                            <input class="form-check-input pastel-switch" type="checkbox" role="switch" id="taskOrderSwitch"
+                                v-model="isAscending" @change="toggleOrder">
                         </div>
 
                         <div class="task-section mt-3">
