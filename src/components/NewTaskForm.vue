@@ -183,7 +183,7 @@ export default {
 </script>
 
 <template>
-    <form v-on:submit="createNewTask($event)" class="task-form">
+    <form class="task-form">
         <div class="mb-3">
             <label for="form-name" class="form-label">Task Name</label>
             <input type="text" v-model="data.formName" @input="(getSuggestedTask(), clearValidationMessage('name'))"
@@ -269,7 +269,7 @@ export default {
 
         <!-- Buttons for Submit and Reset -->
         <div class="button-group">
-            <button type="submit" class="btn btn-primary styled-button submit-button">
+            <button type="button" @click="createNewTask($event)" class="btn btn-primary styled-button submit-button">
                 Submit
             </button>
             <button type="button" @click="resetForm" class="btn btn-secondary styled-button reset-button">
