@@ -73,7 +73,7 @@ export default {
 
     computed: {
         orderLabel() {
-            return this.isAscending ? "Ascendente" : "Discendente";
+            return this.isAscending ? "Poco" : "Molto";
         }
     }
 };
@@ -115,7 +115,7 @@ export default {
                             <input class="form-check-input pastel-switch" type="checkbox" role="switch" id="taskOrderSwitch"
                                 v-model="isAscending" @change="toggleOrder">
                             <label class="form-check-label" for="taskOrderSwitch">
-                                {{ orderLabel }}
+                                Quanto tempo hai? {{ orderLabel }}
                             </label>
                         </div>
 
