@@ -157,12 +157,12 @@ export default {
 @use "../assets/partials/variables" as *;
 
 .pastel-navbar {
-    background-color: $pastel-primary;
+    background-color: white;
     border-bottom: 2px solid $pastel-accent;
 }
 
 .container {
-    background-color: $pastel-secondary;
+    background-color: white;
     padding: 20px;
     border-radius: 12px;
 
