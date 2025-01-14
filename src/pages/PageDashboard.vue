@@ -120,17 +120,17 @@ export default {
                         </div>
 
                         <div class="task-section mt-3">
-                            <h6 class="section-title">Nome</h6>
+                            <h6 class="section-title fw-bold">Nome</h6>
                             <p class="section-content">{{ priorityTask.name }}</p>
                         </div>
 
-                        <div class="task-section">
+                        <!-- <div class="task-section">
                             <h6 class="section-title">Scadenza</h6>
                             <p class="section-content">{{ priorityTask.deadline }}</p>
-                        </div>
+                        </div> -->
 
                         <div class="task-section">
-                            <h6 class="section-title">Tempo stimato</h6>
+                            <h6 class="section-title fw-bold">Tempo stimato</h6>
                             <p class="section-content">{{ priorityTask.estimated_time }} Minuti</p>
                         </div>
 
