@@ -1,5 +1,5 @@
 <script>
-import axios from 'axios';
+import api from '@/api/axios';
 
 export default {
     props: {
@@ -37,7 +37,7 @@ export default {
     methods: {
         getMomentData() {
             // Usa this per accedere alle props
-            axios.get('http://127.0.0.1:8000/api/moments/get-card-data', {
+            api.get('moments/get-card-data', {
                 params: {
                     emotion_id: this.emotion_id,
                     moments_type_id: this.moments_type_id,

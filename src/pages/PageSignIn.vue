@@ -1,5 +1,5 @@
 <script>
-import axios from "axios";
+import api from "@/api/axios";
 
 export default {
     data() {
@@ -69,7 +69,7 @@ export default {
                 return; // Stop the request if the validation fails
             }
 
-            axios.post("http://127.0.0.1:8000/api/register", this.signInForm)
+            api.post("register", this.signInForm)
                 .then((response) => {
                     console.log(response);
                 })

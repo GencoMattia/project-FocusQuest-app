@@ -1,5 +1,5 @@
 <script>
-import axios from "axios";
+import api from "@/api/axios";
 import UserProfileLink from "@/components/UserProfileLink.vue";
 import { store } from "@/store";
 
@@ -27,7 +27,7 @@ export default {
     methods: {
         async fetchUserData() {
             try {
-                const response = await axios.get('http://127.0.0.1:8000/api/users/show');
+                const response = await api.get('users/show');
                 console.log(response.data.user);
 
                 this.store.loggedUser.name = response.data.user.name;
@@ -44,7 +44,7 @@ export default {
         getPriorityTask() {
             console.log("Order direction:", this.isAscending ? "Ascending" : "Descending");
 
-            axios.get('http://127.0.0.1:8000/api/tasks/top-priority', {
+            api.get('tasks/top-priority', {
                 params: {
                     estimated_time_order: this.isAscending ? "asc" : "desc"
                 }

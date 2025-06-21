@@ -1,5 +1,5 @@
 <script>
-import axios from 'axios';
+import api from '@/api/axios';
 import { nextTick } from 'vue';
 // Removed global debounceTimeout declaration
 
@@ -132,7 +132,7 @@ export default {
         },
 
         getData() {
-            axios.get('http://127.0.0.1:8000/api/tasks/form-data')
+            api.get('tasks/form-data')
                 .then((response) => {
                     this.categories = response.data.data.categories;
                     this.priorities = response.data.data.priorities;
@@ -148,7 +148,7 @@ export default {
             clearTimeout(debounceTimeout);
             if (this.data.formName.length > 1) {
                 debounceTimeout = setTimeout(() => {
-                    axios.get(`http://127.0.0.1:8000/api/tasks/suggest-tasks?query=${this.data.formName}`)
+                    api.get(`tasks/suggest-tasks?query=${this.data.formName}`)
                         .then((response) => {
                             console.log('[getSuggestedTask] Suggestions:', response.data.tasks);
                             this.suggestedTasks = response.data.tasks;
@@ -176,7 +176,7 @@ export default {
             this.isSubmitting = true;
             const estimatedTime = this.getTotalMinutes(this.data.formHours, this.data.formMinutes);
 
-            axios.post('http://localhost:8000/api/tasks/create', {
+            api.post('tasks/create', {
                 name: this.data.formName,
                 description: this.data.formDescription,
                 estimated_time: estimatedTime,
@@ -482,4 +482,3 @@ textarea {
     font-size: 0.9rem;
 }
 </style>
-``` 

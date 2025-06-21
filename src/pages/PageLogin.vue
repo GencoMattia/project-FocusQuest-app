@@ -1,5 +1,5 @@
 <script>
-import axios from "axios";
+import api from "@/api/axios";
 import { store } from "@/store";
 export default {
     data() {
@@ -60,7 +60,7 @@ export default {
                 return; //Stop the request if the validation fails
             }
 
-            axios.post("http://127.0.0.1:8000/api/auth/login", {
+            api.post("auth/login", {
                 email: this.userEmail,
                 password: this.userPassword
             })

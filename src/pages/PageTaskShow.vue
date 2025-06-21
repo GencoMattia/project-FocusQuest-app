@@ -1,7 +1,7 @@
 <script>
 import MomentCard from '@/components/MomentCard.vue';
 import { store } from '@/store';
-import axios from 'axios';
+import api from '@/api/axios';
 export default {
     components: {
         MomentCard
@@ -20,7 +20,7 @@ export default {
     methods: {
         getTaskData() {
             const task_id = this.$route.params.id;
-            axios.get(`http://127.0.0.1:8000/api/tasks/${task_id}/show`)
+            api.get(`tasks/${task_id}/show`)
                 .then((response) => {
                     this.task = response.data.task;
                     this.moments = this.task.moments;
@@ -28,7 +28,7 @@ export default {
         },
 
         modifyTaskStatus(status_id, task_id) {
-            axios.patch(`http://127.0.0.1:8000/api/tasks/${task_id}/status`, {
+            api.patch(`tasks/${task_id}/status`, {
                 'status_id': status_id,
                 'task_id': task_id
             })

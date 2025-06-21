@@ -1,5 +1,5 @@
 <script>
-import axios from 'axios';
+import api from '@/api/axios';
 export default {
     data() {
         return {
@@ -8,8 +8,8 @@ export default {
     },
     methods: {
         getUserTask() {
-            axios
-                .get('http://127.0.0.1:8000/api/tasks/index')
+            api
+                .get('tasks/index')
                 .then(response => {
                     this.tasks = response.data;
                 })
@@ -81,6 +81,7 @@ export default {
 </template>
 
 <style lang="scss" scoped>
+@use "sass:color";
 /* Variabili per colori pastello */
 $primary-color: #a3d8f4;
 $secondary-color: #fdf5e6;
