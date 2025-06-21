@@ -85,7 +85,7 @@ export default {
                     console.log('momento creato con successo')
                 }).catch((error) => {
                     if (error.response && error.response.data) {
-                        this.errors.server = "Email o password errati";
+                        this.errors.server = "Errore durante la creazione del momento";
                     }
 
                     console.log("Login Error:", error.response.data);
