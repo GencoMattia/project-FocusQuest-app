@@ -100,7 +100,7 @@ $white: #fff;
             background-color: $primary-color;
             border: none;
             &:hover {
-                background-color: darken($primary-color, 10%);
+                background-color: color.adjust($primary-color, $lightness: -10%);
             }
         }
     }
@@ -113,7 +113,7 @@ $white: #fff;
         tbody {
             tr {
                 &:hover {
-                    background-color: lighten($primary-color, 40%);
+                    background-color: color.adjust($primary-color, $lightness: 40%);
                 }
             }
         }
@@ -130,7 +130,7 @@ $white: #fff;
     .alert-warning {
         background-color: $secondary-color;
         color: $text-color;
-        border: 1px solid lighten($primary-color, 20%);
+        border: 1px solid color.adjust($primary-color, $lightness: 20%);
     }
 }
 </style>
