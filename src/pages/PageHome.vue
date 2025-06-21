@@ -1,168 +1,108 @@
 <script>
 export default {
     data() {
-        return {
-
-        };
+        return {};
     }
 };
 </script>
 
 <template>
-    <div class="homepage">
+    <div class="homepage container py-5">
         <!-- Hero Section -->
-        <section class="hero d-flex flex-column-reverse">
-            <div class="hero-text">
-                <p>Your playful and productive task management solution.</p>
-                <h1>Welcome to FocusQuest</h1>
-                <a href="#features" class="btn-primary">Explore Features</a>
+        <section class="hero d-flex flex-column-reverse flex-lg-row align-items-center bg-primary text-white p-5 rounded mb-5 shadow-lg">
+            <div class="hero-text col-lg-6 mb-4 mb-lg-0">
+                <p class="lead">Your playful and productive task management solution.</p>
+                <h1 class="display-4">Welcome to FocusQuest</h1>
+                <a href="#features" class="btn btn-light btn-lg mt-3">Explore Features</a>
             </div>
-            <div class="hero-image">
-                <img src="../assets/img/Jumbo-img.jpg" alt="Task management illustration">
+            <div class="hero-image col-lg-6">
+                <img src="../assets/img/Jumbo-img.jpg" alt="Task management illustration" class="img-fluid rounded shadow-sm">
             </div>
         </section>
 
         <!-- Features Section -->
-        <section id="features" class="features">
-            <h2>Key Features</h2>
-            <div class="feature-cards">
-                <div class="card">
-                    <h3>Task Prioritization</h3>
-                    <p>Easily prioritize tasks based on urgency and deadlines.</p>
+        <section id="features" class="features bg-light py-5 rounded shadow-sm mb-5">
+            <h2 class="text-center mb-5 text-primary">Key Features</h2>
+            <div class="row gx-4 gy-4">
+                <div class="col-md-4">
+                    <div class="card h-100 shadow-sm">
+                        <div class="card-body">
+                            <h3 class="card-title text-primary">Task Prioritization</h3>
+                            <p class="card-text">Easily prioritize tasks based on urgency and deadlines.</p>
+                        </div>
+                    </div>
                 </div>
-                <div class="card">
-                    <h3>Emotional Feedback</h3>
-                    <p>Track your emotional state while working on tasks.</p>
+                <div class="col-md-4">
+                    <div class="card h-100 shadow-sm">
+                        <div class="card-body">
+                            <h3 class="card-title text-primary">Emotional Feedback</h3>
+                            <p class="card-text">Track your emotional state while working on tasks.</p>
+                        </div>
+                    </div>
                 </div>
-                <div class="card">
-                    <h3>Gamified Progress</h3>
-                    <p>Earn achievements as you complete tasks and reach your goals.</p>
+                <div class="col-md-4">
+                    <div class="card h-100 shadow-sm">
+                        <div class="card-body">
+                            <h3 class="card-title text-primary">Gamified Progress</h3>
+                            <p class="card-text">Earn achievements as you complete tasks and reach your goals.</p>
+                        </div>
+                    </div>
                 </div>
             </div>
         </section>
 
         <!-- About Section -->
-        <section id="about" class="about">
-            <h2>About FocusQuest</h2>
-            <p>
-                FocusQuest is designed to help individuals, especially those with ADHD, stay organized,
-                motivated, and in tune with their emotional well-being. It’s not just about getting things done,
-                it’s about making the journey enjoyable and rewarding.
-            </p>
+        <section id="about" class="about py-5 mb-5">
+            <div class="container">
+                <h2 class="text-center mb-4 text-accent">About FocusQuest</h2>
+                <p class="text-center fs-5">
+                    FocusQuest is designed to help individuals, especially those with ADHD, stay organized,
+                    motivated, and in tune with their emotional well-being. It’s not just about getting things done,
+                    it’s about making the journey enjoyable and rewarding.
+                </p>
+            </div>
         </section>
 
         <!-- Footer -->
-        <footer class="footer">
+        <footer class="footer bg-primary text-white py-3 text-center rounded">
             <p>&copy; 2024 FocusQuest. All rights reserved.</p>
         </footer>
     </div>
 </template>
 
+
 <style lang="scss" scoped>
-/* Define variables for colors */
-$primary-color: #5b61b9;
-$secondary-color: #f4f4f9;
-$text-color: #333;
-$bg-light: #f0f0f0;
+/* Variabili per colori pastello */
+$primary-color: #a3d8f4; // Soft pastel blue
+$secondary-color: #fdf5e6; // Light pastel cream
+$accent-color: #ffd5cd; // Warm pastel pink
+$text-color: #4a4a4a;
 $white: #fff;
 
-/* General Layout */
 .homepage {
-    font-family: 'Arial', sans-serif;
+    font-family: 'Poppins', sans-serif;
     color: $text-color;
     text-align: center;
-    padding: 20px;
 
     .hero {
-        display: flex;
-        align-items: center;
-        justify-content: space-between;
-        background-color: $secondary-color;
-        padding: 40px 20px;
-
-        .hero-text {
-            max-width: 50%;
-
-            h1 {
-                font-size: 3rem;
-                color: $primary-color;
-            }
-
-            p {
-                font-size: 1.2rem;
-                margin: 20px 0;
-            }
-
-            .btn-primary {
-                background-color: $primary-color;
-                color: $white;
-                padding: 10px 20px;
-                text-decoration: none;
-                border-radius: 5px;
-            }
-        }
-
-        .hero-image img {
-            max-width: 100%;
-            height: auto;
-        }
+        background: linear-gradient(135deg, $primary-color 30%, $accent-color 100%);
     }
 
-    /* Features Section */
     .features {
-        background-color: $bg-light;
-        padding: 40px 20px;
-
-        h2 {
-            font-size: 2.5rem;
-            margin-bottom: 30px;
-        }
-
-        .feature-cards {
-            display: flex;
-            justify-content: space-around;
-            flex-wrap: wrap;
-
-            .card {
-                background-color: $white;
-                padding: 20px;
-                border-radius: 10px;
-                box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-                max-width: 300px;
-                margin: 10px;
-
-                h3 {
-                    font-size: 1.5rem;
-                    color: $primary-color;
-                }
-
-                p {
-                    font-size: 1rem;
-                }
-            }
-        }
+        background-color: $secondary-color;
     }
 
-    /* About Section */
     .about {
-        padding: 40px 20px;
+        color: $text-color;
 
-        h2 {
-            font-size: 2.5rem;
-            margin-bottom: 20px;
-        }
-
-        p {
-            font-size: 1.2rem;
+        .text-accent {
+            color: $accent-color;
         }
     }
 
-    /* Footer */
     .footer {
-        background-color: $text-color;
+        background-color: $primary-color;
         color: $white;
-        padding: 20px;
-        text-align: center;
     }
 }
 </style>
