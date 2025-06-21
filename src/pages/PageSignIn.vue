@@ -10,6 +10,7 @@ export default {
             userPassword: "",
             userPasswordConfirmation: "",
             errors: {},
+            isSubmitting: false,
         };
     },
 
@@ -62,28 +63,41 @@ export default {
             this.errors[field] = "";
         },
 
-        createNewUser(event) {
+        async createNewUser(event) {
             event.preventDefault();
 
             if (!this.validateInput()) {
                 return; // Stop the request if the validation fails
             }
 
-            api.post("register", this.signInForm)
-                .then((response) => {
-                    console.log(response);
-                })
-                .catch((error) => {
-                    if (error.response && error.response.data.errors) {
-                        Object.keys(error.response.data.errors).forEach(field => {
-                            this.errors[field] = error.response.data.errors[field][0];
-                        });
-                    } else {
-                        this.errors.server = "Registrazione Utente non riuscita";
-                    }
-
-                    console.log(error.response);
-                });
+            this.errors = {}; // Clear previous errors
+            this.isSubmitting = true;
+            try {
+                const response = await api.post("register", this.signInForm);
+                // Reset form fields after successful registration
+                this.userEmail = "";
+                this.userName = "";
+                this.userSurname = "";
+                this.userPassword = "";
+                this.userPasswordConfirmation = "";
+                // Optionally, redirect or show a success message
+                // this.$router.push({ name: 'login' });
+                // alert('Registrazione avvenuta con successo!');
+                console.log(response);
+            } catch (error) {
+                if (error.response && error.response.data && error.response.data.errors) {
+                    Object.keys(error.response.data.errors).forEach(field => {
+                        // Always show the first error message as string
+                        const err = error.response.data.errors[field];
+                        this.errors[field] = Array.isArray(err) ? err[0] : err;
+                    });
+                } else {
+                    this.errors.server = "Registrazione Utente non riuscita";
+                }
+                console.log(error.response);
+            } finally {
+                this.isSubmitting = false;
+            }
         }
     },
 
@@ -153,7 +167,9 @@ export default {
 
                 <div v-if="errors.server" class="text-danger">{{ errors.server }}</div>
 
-                <button type="submit" class="btn btn-primary">Submit</button>
+                <button type="submit" class="btn btn-primary" :disabled="isSubmitting">
+                    {{ isSubmitting ? 'Submitting...' : 'Submit' }}
+                </button>
             </form>
 
             <div class="register-footer">
