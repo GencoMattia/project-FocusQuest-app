@@ -34,6 +34,16 @@ export default {
                 this.errors.message = "Il messaggio può essere lungo al massimo 150 caratteri"
             }
 
+            // Emotion validator
+            if (!this.momentData.emotion_id || this.momentData.emotion_id === 0) {
+                this.errors.emotion_id = "Seleziona un'emozione";
+            }
+
+            // Moment type validator
+            if (!this.momentData.moments_type_id || this.momentData.moments_type_id === 0) {
+                this.errors.moments_type_id = "Seleziona un tipo di momento";
+            }
+
             return Object.keys(this.errors).length === 0;
         },
 
@@ -126,16 +136,24 @@ export default {
                     <div class="mb-3">
                         <label for="name">Insert Moment's Emotion</label>
                         <select name="emotion_id" id="moment-form-emotion" v-model="momentData.emotion_id">
+                            <option value="0" disabled>Seleziona un'emozione</option>
                             <option v-for="emotion in emotions" :value="emotion.id">{{ emotion.name }}</option>
                         </select>
+                        <div v-if="errors.emotion_id" class="error-message">
+                            {{ errors.emotion_id }}
+                        </div>
                     </div>
 
                     <div class="mb-3">
                         <label for="name">Insert Moment's Type</label>
                         <select name="moments_type_id" id="moment-form-type" v-model="momentData.moments_type_id">
+                            <option value="0" disabled>Seleziona un tipo</option>
                             <option v-for="moment_type in moment_types" :value="moment_type.id">{{ moment_type.name }}
                             </option>
                         </select>
+                        <div v-if="errors.moments_type_id" class="error-message">
+                            {{ errors.moments_type_id }}
+                        </div>
                     </div>
 
                     <!-- Show generic error -->

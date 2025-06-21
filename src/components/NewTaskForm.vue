@@ -58,8 +58,12 @@ export default {
             }
 
             // Task's estimated_time validator
-            if (this.data.formMinutes < 1) {
-                this.errors.estimatedTime = "Il tempo stimato deve essere di almeno 1 minuto"
+            const hours = parseInt(this.data.formHours);
+            const minutes = parseInt(this.data.formMinutes);
+            if ((isNaN(hours) || hours < 0) || (isNaN(minutes) || minutes < 0)) {
+                this.errors.estimatedTime = "Ore e minuti devono essere valori positivi";
+            } else if (hours === 0 && minutes === 0) {
+                this.errors.estimatedTime = "Devi inserire almeno 1 minuto o 1 ora";
             }
 
             // Task's deadline validator
@@ -73,6 +77,14 @@ export default {
                 if (deadlineDate < currentDate) {
                     this.errors.deadline = "La deadline non può essere precedente ad oggi";
                 }
+            }
+
+            // Categoria e priorità devono essere selezionate
+            if (!this.data.formCategoryId || this.data.formCategoryId === 0) {
+                this.errors.category = "Seleziona una categoria";
+            }
+            if (!this.data.formPriorityId || this.data.formPriorityId === 0) {
+                this.errors.priority = "Seleziona una priorità";
             }
 
             //If there are any errors return false, otherwise return true
@@ -125,11 +137,6 @@ export default {
                 this.showDropdown = false;
             }
         },
-
-        // handleInput(value) {
-        //     this.getSuggestedTasks();
-        //     this.clearValidationMessage(value);
-        // },
 
         async createNewTask(event) {
             event.preventDefault();
@@ -252,19 +259,27 @@ export default {
         <div class="mb-3">
             <label for="category" class="form-label">Category</label>
             <select name="category" v-model="data.formCategoryId" id="form-category" class="form-control styled-select">
+                <option value="0" disabled>Seleziona una categoria</option>
                 <option v-for="(category, index) in categories" :key="index" :value="category.id">
                     {{ category.name }}
                 </option>
             </select>
+            <div v-if="errors.category" class="error-message">
+                {{ errors.category }}
+            </div>
         </div>
 
         <div class="mb-3">
             <label for="priority" class="form-label">Priority</label>
             <select name="priority" v-model="data.formPriorityId" id="form-priority" class="form-control styled-select">
+                <option value="0" disabled>Seleziona una priorità</option>
                 <option v-for="(priority, index) in priorities" :key="index" :value="priority.id">
                     {{ priority.name }}
                 </option>
             </select>
+            <div v-if="errors.priority" class="error-message">
+                {{ errors.priority }}
+            </div>
         </div>
 
         <!-- Buttons for Submit and Reset -->
