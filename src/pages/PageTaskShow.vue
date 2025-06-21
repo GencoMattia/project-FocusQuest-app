@@ -1,23 +1,29 @@
 <script>
+import MomentCard from '@/components/MomentCard.vue';
 import { store } from '@/store';
 import axios from 'axios';
 export default {
+    components: {
+        MomentCard
+    },
     data() {
         return {
             store,
             task: [],
+            moments: [],
             completed_task_data: [],
             is_task_completed: false,
+            moment_card_data: []
         }
     },
 
     methods: {
         getTaskData() {
             const task_id = this.$route.params.id;
-
             axios.get(`http://127.0.0.1:8000/api/tasks/${task_id}/show`)
                 .then((response) => {
                     this.task = response.data.task;
+                    this.moments = this.task.moments;
                 });
         },
 
@@ -27,15 +33,32 @@ export default {
                 'task_id': task_id
             })
                 .then((response) => {
-                    this.getTaskData();
+                    this.getTaskData(); // Ricarica la task aggiornata
                     if (this.task.status_id === 3) {
                         this.is_task_completed = true;
                         this.completed_task_data = response.data;
                     }
                 })
                 .catch((error) => {
-                    console.error('Errore nell\'aggiornamento dello stato della task:', error);
+                    // Puoi gestire l'errore anche visualizzando un alert o un messaggio utente
+                    // console.error('Errore nell\'aggiornamento dello stato della task:', error);
                 });
+        }
+    },
+
+    watch: {
+        moments() {
+            this.moment_card_data = [];
+            this.moments.forEach(moment => {
+                this.moment_card_data.push({
+                    'id': moment.id, 
+                    'task_id': moment.task_id, 
+                    'moments_type_id': moment.moments_type_id, 
+                    'emotion_id': moment.emotion_id, 
+                    'name': moment.name, 
+                    'message': moment.message
+                });
+            });
         }
     },
 
@@ -58,7 +81,7 @@ export default {
                         <h5 class="card-title text-primary">{{ task.name }}</h5>
                         <p class="card-text text-secondary">{{ task.description }}</p>
 
-                        <ul class="list-group list-group-flush">
+                        <ul class="list-group list-group-flush mb-5">
                             <li class="list-group-item">
                                 <strong>Priorità:</strong>
                                 <span class="badge rounded-pill" :style="{ backgroundColor: task.priority?.color }">
@@ -78,6 +101,18 @@ export default {
                                 <strong>Iniziato il:</strong> {{ task.started_at }}
                             </li>
                         </ul>
+
+                        <div v-if="moment_card_data && moment_card_data.length" class="moment-cards-container d-flex justify-content-around mb-3">
+                            <MomentCard v-for="moment_card in moment_card_data" 
+                            :key="moment_card.id"
+                            :id="moment_card.id"
+                            :task_id="moment_card.task_id"
+                            :moments_type_id="moment_card.moments_type_id"
+                            :emotion_id="moment_card.emotion_id"
+                            :name="moment_card.name"
+                            :message="moment_card.message"
+                            />
+                        </div>
                     </div>
 
                     <!-- Pulsanti Azioni -->
@@ -86,9 +121,9 @@ export default {
                         <button v-if="task.status_id == 4" class="btn btn-secondary me-2" @click="modifyTaskStatus(2, task.id)">Riavvia Task</button>
                         <button v-if="task.status_id == 2" class="btn btn-stop me-2" @click="modifyTaskStatus(4, task.id)">Interrompi Task</button>
                         <button class="btn btn-complete me-2" @click="modifyTaskStatus(3, task.id)">Completa Task</button>
-                        <router-link :to="{ name: 'moments.create', params: { id: task.id } }" class="btn btn-outline-primary">
-                            Aggiungi un Momento
-                        </router-link>
+                        <button class="btn btn-tertiary">
+                            <RouterLink :to="{ name: 'moments.create', params: { id: task.id } }">Aggiungi un Momento</RouterLink>
+                        </button>
                     </div>
                 </div>
 
@@ -102,82 +137,9 @@ export default {
                 <!-- Messaggio di completamento -->
                 <div v-if="is_task_completed" class="alert alert-success mt-4 text-center">
                     <p>🎉 Complimenti! Hai completato la task con successo.</p>
-                    <p v-for="data in completed_task_data" :key="data.id">{{ data }}</p>
+                    <p v-for="(data, idx) in completed_task_data" :key="idx">{{ data }}</p>
                 </div>
             </div>
         </div>
     </div>
 </template>
-
-<style lang="scss" scoped>
-/* Variabili per colori pastello */
-$primary-color: #a3d8f4;
-$secondary-color: #fdf5e6;
-$accent-color: #ffd5cd;
-$text-color: #4a4a4a;
-$success-color: #28a745;
-$danger-color: #dc3545;
-
-.task-detail {
-    font-family: 'Poppins', sans-serif;
-
-    .card {
-        border: none;
-        .card-header {
-            font-size: 18px;
-            font-weight: bold;
-        }
-        .card-body {
-            h5 {
-                color: $primary-color;
-            }
-            p {
-                color: $text-color;
-            }
-        }
-        .card-footer {
-            .btn {
-                padding: 10px 20px;
-                border-radius: 30px;
-                font-size: 16px;
-                font-weight: 600;
-                transition: all 0.3s ease-in-out;
-
-                &-start {
-                    background-color: $success-color;
-                    color: $secondary-color;
-                    border: none;
-                }
-
-                &-stop {
-                    background-color: $danger-color;
-                    color: $secondary-color;
-                    border: none;
-                }
-
-                &-complete {
-                    background-color: $accent-color;
-                    color: $text-color;
-                    border: none;
-                }
-
-                &:hover {
-                    transform: scale(1.05);
-                    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
-                }
-
-                &:focus {
-                    outline: none;
-                    box-shadow: 0 0 0 3px rgba(0, 123, 255, 0.25);
-                }
-            }
-        }
-    }
-
-    .alert {
-        border: 1px solid lighten($primary-color, 20%);
-        background-color: $secondary-color;
-        color: $text-color;
-    }
-}
-</style>
