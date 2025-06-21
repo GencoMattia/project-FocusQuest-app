@@ -22,6 +22,7 @@ export default {
             taskSelected: false,
 
             errors: {},
+            isSubmitting: false,
         }
     },
 
@@ -138,12 +139,12 @@ export default {
             }
         },
 
-        async createNewTask(event) {
-            event.preventDefault();
+        async createNewTask() {
+            if (this.isSubmitting) return;
             if (!this.validateInput()) {
                 return; // Stop the request if the validation fails
             }
-
+            this.isSubmitting = true;
             const estimatedTime = this.getTotalMinutes(this.data.formHours, this.data.formMinutes);
 
             axios.post('http://localhost:8000/api/tasks/create', {
@@ -167,6 +168,9 @@ export default {
                     } else {
                         console.error('Error:', error.message);
                     }
+                })
+                .finally(() => {
+                    this.isSubmitting = false;
                 });
         },
 
@@ -190,7 +194,7 @@ export default {
 </script>
 
 <template>
-    <form class="task-form">
+    <form class="task-form" @submit.prevent="createNewTask">
         <div class="mb-3">
             <label for="form-name" class="form-label">Task Name</label>
             <input type="text" v-model="data.formName" @input="(getSuggestedTask(), clearValidationMessage('name'))"
@@ -284,7 +288,7 @@ export default {
 
         <!-- Buttons for Submit and Reset -->
         <div class="button-group">
-            <button type="button" @click="createNewTask($event)" class="btn btn-primary styled-button submit-button">
+            <button type="submit" :disabled="isSubmitting" class="btn btn-primary styled-button submit-button">
                 Submit
             </button>
             <button type="button" @click="resetForm" class="btn btn-secondary styled-button reset-button">
