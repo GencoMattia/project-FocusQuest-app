@@ -1,5 +1,8 @@
 <script>
 import axios from 'axios';
+import { nextTick } from 'vue';
+let debounceTimeout = null; // debounce globale per il componente
+
 export default {
     data() {
         return {
@@ -23,19 +26,30 @@ export default {
 
             errors: {},
             isSubmitting: false,
+            lastFormName: '', // <--- aggiungi questa variabile
         }
     },
 
     watch: {
         "data.formName": function (newVal) {
+            console.log('[WATCH] data.formName changed:', newVal, 'taskSelected:', this.taskSelected);
             if (this.taskSelected) {
+                console.log('[WATCH] taskSelected is true, resetting to false and returning');
                 this.taskSelected = false;
                 return;
             }
+            // Evita chiamate duplicate se il valore non è cambiato realmente
+            if (newVal === this.lastFormName) {
+                console.log('[WATCH] formName unchanged, skipping');
+                return;
+            }
+            this.lastFormName = newVal;
 
             if (newVal.length > 1) {
+                console.log('[WATCH] Calling getSuggestedTask()');
                 this.getSuggestedTask();
             } else {
+                console.log('[WATCH] Clearing suggestions and hiding dropdown');
                 this.suggestedTasks = [];
                 this.showDropdown = false;
             }
@@ -97,6 +111,7 @@ export default {
         },
 
         fillForm(task) {
+            console.log('[fillForm] Filling form with task:', task);
             this.data.formName = task.name;
             this.data.formDescription = task.description;
             this.data.formHours = Math.floor(task.estimated_time / 60);
@@ -106,6 +121,10 @@ export default {
 
             this.taskSelected = true;
             this.showDropdown = false;
+            nextTick(() => {
+                console.log('[fillForm] nextTick: setting taskSelected to false');
+                this.taskSelected = false;
+            });
         },
 
         getTotalMinutes(hours, minutes) {
@@ -125,23 +144,33 @@ export default {
         },
 
         getSuggestedTask() {
+            console.log('[getSuggestedTask] Called with formName:', this.data.formName);
+            clearTimeout(debounceTimeout);
             if (this.data.formName.length > 1) {
-                axios.get(`http://127.0.0.1:8000/api/tasks/suggest-tasks?query=${this.data.formName}`)
-                    .then((response) => {
-                        this.suggestedTasks = response.data.tasks;
-                        this.showDropdown = true;
-                    })
-                    .catch((error) => {
-                        console.error('Error loading task suggestions:', error);
-                    });
+                debounceTimeout = setTimeout(() => {
+                    axios.get(`http://127.0.0.1:8000/api/tasks/suggest-tasks?query=${this.data.formName}`)
+                        .then((response) => {
+                            console.log('[getSuggestedTask] Suggestions:', response.data.tasks);
+                            this.suggestedTasks = response.data.tasks;
+                            this.showDropdown = true;
+                        })
+                        .catch((error) => {
+                            console.error('[getSuggestedTask] Error loading task suggestions:', error);
+                            this.suggestedTasks = [];
+                            this.showDropdown = true;
+                        });
+                }, 300); // 300ms debounce
             } else {
+                this.suggestedTasks = [];
                 this.showDropdown = false;
             }
         },
 
         async createNewTask() {
+            console.log('[createNewTask] Called, isSubmitting:', this.isSubmitting);
             if (this.isSubmitting) return;
             if (!this.validateInput()) {
+                console.log('[createNewTask] Validation failed:', this.errors);
                 return; // Stop the request if the validation fails
             }
             this.isSubmitting = true;
@@ -156,25 +185,27 @@ export default {
                 deadline: this.data.formDeadline,
             })
                 .then((response) => {
-                    console.log('Task created successfully:', response.data);
+                    console.log('[createNewTask] Task created successfully:', response.data);
                     this.resetForm();
                 })
                 .catch((error) => {
                     if (error.response && error.response.data) {
                         this.errors.server = "La Creazione della Task non è andata a buon fine";
-                        console.error('Server response:', error.response.data);
+                        console.error('[createNewTask] Server response:', error.response.data);
                     } else if (error.request) {
-                        console.error('No response received:', error.request);
+                        console.error('[createNewTask] No response received:', error.request);
                     } else {
-                        console.error('Error:', error.message);
+                        console.error('[createNewTask] Error:', error.message);
                     }
                 })
                 .finally(() => {
+                    console.log('[createNewTask] Request finished, setting isSubmitting to false');
                     this.isSubmitting = false;
                 });
         },
 
         resetForm() {
+            console.log('[resetForm] Resetting form');
             this.data.formName = '';
             this.data.formDescription = '';
             this.data.formHours = 0;
@@ -185,9 +216,22 @@ export default {
             this.suggestedTasks = [];
             this.showDropdown = false;
         },
+
+        onCreateNewTaskClick() {
+            console.log('[onCreateNewTaskClick] Clicked + Create New Task');
+            this.showDropdown = false;
+            this.suggestedTasks = [];
+            this.taskSelected = true;
+            // opzionale: this.data.formName = '';
+            nextTick(() => {
+                console.log('[onCreateNewTaskClick] nextTick: setting taskSelected to false');
+                this.taskSelected = false;
+            });
+        },
     },
 
     mounted() {
+        console.log('[mounted] NewTaskForm mounted');
         this.getData();
     }
 }
@@ -211,7 +255,7 @@ export default {
                     class="suggestion-item button-like">
                     {{ task.name }}
                 </li>
-                <li @click="showDropdown = false" class="suggestion-item new-task-button">+ Create New Task</li>
+                <li @click="onCreateNewTaskClick" class="suggestion-item new-task-button">+ Create New Task</li>
             </ul>
         </div>
 
@@ -438,3 +482,4 @@ textarea {
     font-size: 0.9rem;
 }
 </style>
+``` 
