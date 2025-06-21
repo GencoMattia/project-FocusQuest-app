@@ -1,7 +1,7 @@
 <script>
 import axios from 'axios';
 import { nextTick } from 'vue';
-let debounceTimeout = null; // debounce globale per il componente
+// Removed global debounceTimeout declaration
 
 export default {
     data() {
