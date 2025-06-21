@@ -6,15 +6,21 @@ import appHeader from './components/appHeader.vue';
 </script>
 
 <template>
-  <header>
-    <appHeader />
-  </header>
-
-  <RouterView />
+  <div id="app-bg">
+    <header>
+      <appHeader />
+    </header>
+    <RouterView />
+  </div>
 </template>
 
 <style lang="scss">
+@use "./assets/partials/_variables.scss" as *;
 @use "../node_modules/bootstrap/scss/bootstrap.scss";
 @use "./assets/general.scss";
-@use "./assets/partials/variables.scss" as *;
+
+#app-bg {
+  min-height: 100vh;
+  background: linear-gradient(135deg, $primary-color 30%, $pastel-accent 100%);
+}
 </style>

@@ -35,33 +35,37 @@ export default {
 </template>
 
 <style scoped lang="scss">
-@use "../assets/partials/variables" as *;
+@use "../assets/partials/_variables.scss" as *;
 
 .profile-container {
-    background-color: $background-color; // Light background
-    padding: 20px;
-    border-radius: 10px;
-    box-shadow: $box-shadow; // Add shadow for depth
-    max-width: 600px;
-    margin: auto;
-    text-align: center; // Center content
+    background-color: $secondary-color;
+    padding: 2.5rem 2rem;
+    border-radius: 18px;
+    box-shadow: 0 4px 18px rgba(0, 0, 0, 0.10);
+    max-width: 420px;
+    margin: 3rem auto;
+    text-align: center;
+    font-family: 'Poppins', sans-serif;
 
     .profile-title {
-        color: $primary-color; // Use primary color for title
-        font-size: $font-size-lg; // Larger font size for the title
-        margin-bottom: 20px;
+        color: $primary-color;
+        font-size: 2rem;
+        font-weight: bold;
+        margin-bottom: 1.5rem;
     }
 
     .profile-details {
-        background-color: $light-color; // Light background for details
-        border-radius: $btn-border-radius; // Match button radius
-        padding: 15px;
-        box-shadow: $box-shadow; // Shadow for the details box
-        color: $font-color; // Use standard font color
+        background: linear-gradient(135deg, $primary-color 10%, $pastel-accent 100%);
+        color: $text-color;
+        border: 1px solid $primary-color;
+        border-radius: $btn-border-radius;
+        padding: 1.5rem;
+        box-shadow: $box-shadow;
+        font-size: 1.1rem;
+        margin-bottom: 1rem;
 
         p {
-            font-size: $font-size-base; // Base font size for text
-            margin: 5px 0; // Margin for paragraphs
+            margin: 0.5rem 0;
         }
     }
 }

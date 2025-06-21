@@ -180,82 +180,105 @@ export default {
 </template>
 
 <style scoped lang="scss">
+@use "../assets/partials/_variables.scss" as *;
+
 .register-page {
+    min-height: 100vh;
     display: flex;
     justify-content: center;
     align-items: center;
-    height: 100vh;
-    background-color: #f5f5f5;
+    background: linear-gradient(135deg, $primary-color 30%, $pastel-accent 100%);
+    font-family: 'Poppins', sans-serif;
 }
 
 .register-container {
-    background-color: #fff;
-    padding: 2rem;
-    border-radius: 10px;
-    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+    background-color: $secondary-color;
+    padding: 2.5rem 2rem;
+    border-radius: 18px;
+    box-shadow: 0 4px 18px rgba(0, 0, 0, 0.10);
     text-align: center;
     width: 100%;
-    max-width: 400px;
+    max-width: 420px;
+    margin: 2rem auto;
 }
 
 .register-title {
-    font-size: 24px;
+    font-size: 2.2rem;
     font-weight: bold;
-    color: #333;
+    color: $primary-color;
+    margin-bottom: 0.5rem;
 }
 
 .register-subtitle {
-    font-size: 16px;
-    color: #777;
-    margin-bottom: 1.5rem;
+    font-size: 1.1rem;
+    color: $accent-color;
+    margin-bottom: 2rem;
 }
 
-.form-group {
-    margin-bottom: 1rem;
+.form-group, .mb-3 {
+    margin-bottom: 1.2rem;
+    text-align: left;
 }
 
 .form-control {
     width: 100%;
-    padding: 0.75rem;
-    font-size: 14px;
-    border: 1px solid #ccc;
-    border-radius: 5px;
-    box-shadow: inset 0 2px 4px rgba(0, 0, 0, 0.05);
-    transition: border-color 0.3s ease, box-shadow 0.3s ease;
+    padding: 0.85rem;
+    font-size: 1rem;
+    border: 1px solid $primary-color;
+    border-radius: 8px;
+    box-shadow: 0 2px 8px rgba(163, 216, 244, 0.08);
+    transition: border-color 0.3s $transition-timing-function, box-shadow 0.3s $transition-timing-function;
+    background-color: $white;
 }
 
 .form-control:focus {
-    border-color: #007bff;
-    box-shadow: 0 0 8px rgba(0, 123, 255, 0.25);
+    border-color: $accent-color;
+    box-shadow: 0 0 8px $accent-color;
 }
 
-.btn-submit {
+.btn-primary {
     width: 100%;
-    padding: 0.75rem;
-    font-size: 16px;
-    background-color: #007bff;
-    color: #fff;
+    padding: $btn-padding-y $btn-padding-x;
+    font-size: $btn-font-size;
+    background-color: $btn-primary-bg;
+    color: $btn-primary-color;
     border: none;
-    border-radius: 5px;
+    border-radius: $btn-border-radius;
     cursor: pointer;
-    transition: background-color 0.3s ease;
+    transition: background-color $transition-duration $transition-timing-function;
+    margin-top: 1rem;
+    font-weight: bold;
+    letter-spacing: 0.5px;
+
+    &:hover {
+        background-color: $pastel-blue-dark;
+    }
 }
 
-.btn-submit:hover {
-    background-color: #0056b3;
+.text-danger {
+    color: $danger-color;
+    font-size: 0.95rem;
+    margin-top: 0.2rem;
+    text-align: left;
+}
+
+.form-text {
+    color: $secondary-color;
+    font-size: 0.85rem;
 }
 
 .register-footer {
-    margin-top: 1.5rem;
-    font-size: 14px;
-}
+    margin-top: 2rem;
+    font-size: 1rem;
+    color: $text-color;
 
-.register-footer a {
-    color: #007bff;
-    text-decoration: none;
-}
-
-.register-footer a:hover {
-    text-decoration: underline;
+    a {
+        color: $primary-color;
+        text-decoration: underline;
+        transition: color $transition-duration $transition-timing-function;
+        &:hover {
+            color: $accent-color;
+        }
+    }
 }
 </style>

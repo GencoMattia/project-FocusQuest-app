@@ -13,7 +13,7 @@ export default {
             <div class="hero-text col-lg-6 mb-4 mb-lg-0">
                 <p class="lead">Your playful and productive task management solution.</p>
                 <h1 class="display-4">Welcome to FocusQuest</h1>
-                <a href="#features" class="btn btn-light btn-lg mt-3">Explore Features</a>
+                <a href="#features" class="btn btn-action btn-lg mt-3">Explore Features</a>
             </div>
             <div class="hero-image col-lg-6">
                 <img src="../assets/img/Jumbo-img.jpg" alt="Task management illustration" class="img-fluid rounded shadow-sm">
@@ -72,12 +72,7 @@ export default {
 
 
 <style lang="scss" scoped>
-/* Variabili per colori pastello */
-$primary-color: #a3d8f4; // Soft pastel blue
-$secondary-color: #fdf5e6; // Light pastel cream
-$accent-color: #ffd5cd; // Warm pastel pink
-$text-color: #4a4a4a;
-$white: #fff;
+@use "../assets/partials/_variables.scss" as *;
 
 .homepage {
     font-family: 'Poppins', sans-serif;

@@ -334,7 +334,7 @@ export default {
             <button type="submit" :disabled="isSubmitting" class="btn btn-primary styled-button submit-button">
                 Submit
             </button>
-            <button type="button" @click="resetForm" class="btn btn-secondary styled-button reset-button">
+            <button type="button" @click="resetForm" class="btn btn-tertiary pastel-btn-tertiary styled-button reset-button">
                 Reset
             </button>
         </div>
@@ -343,45 +343,45 @@ export default {
 
 
 <style scoped lang="scss">
+@use "../assets/partials/_variables.scss" as *;
 .task-form {
     display: flex;
     flex-direction: column;
     max-width: 600px;
-    margin: 0 auto;
-    padding: 20px;
-    background-color: #ffffff;
-    border-radius: 12px;
-    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
-    font-family: 'Inter', sans-serif;
-
+    margin: 2rem auto;
+    padding: 2.5rem 2rem;
+    background-color: $secondary-color;
+    border-radius: 18px;
+    box-shadow: 0 4px 18px rgba(0, 0, 0, 0.10);
+    font-family: 'Poppins', sans-serif;
     position: relative;
 }
-
 .styled-input,
 .styled-select {
-    padding: 12px;
-    border: 1px solid #ddd;
+    padding: 0.85rem;
+    border: 1px solid $primary-color;
     border-radius: 8px;
     width: 100%;
-    font-size: 16px;
-    margin-bottom: 15px;
-    transition: border-color 0.3s ease;
-
+    font-size: 1rem;
+    margin-bottom: 1.2rem;
+    transition: border-color 0.3s $transition-timing-function;
+    background-color: $white;
     &:focus {
-        border-color: #007bff;
+        border-color: $accent-color;
         outline: none;
+        box-shadow: 0 0 8px $accent-color;
     }
 }
-
 textarea {
     min-height: 120px;
     resize: vertical;
-    border: 1px solid #ddd;
-    padding: 12px;
+    border: 1px solid $primary-color;
+    padding: 0.85rem;
+    border-radius: 8px;
+    background-color: $white;
 }
-
-.dropdown {
-    background-color: #fff;
+.dropdown, .suggestions-list {
+    background-color: $white;
     box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
     border-radius: 8px;
     position: absolute;
@@ -393,91 +393,76 @@ textarea {
     left: 0;
     right: 0;
 }
-
-.suggestions-list {
-    list-style-type: none;
-    padding: 0;
-    margin: 0;
-    background-color: white;
-    border: 1px solid #ccc;
-    border-radius: 8px;
-    max-width: 100%;
-    width: 100%;
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-    position: absolute;
-    z-index: 1000;
-}
-
 .suggestion-item {
     padding: 10px;
     cursor: pointer;
     transition: background-color 0.2s ease;
-
-    &:hover {
-        background-color: #f1f1f1;
-    }
-}
-
-.button-like {
     border-radius: 8px;
-    background-color: #e9ecef;
-    margin: 5px;
-
     &:hover {
-        background-color: #dee2e6;
+        background-color: $pastel-accent;
+        color: $white;
     }
 }
-
+.button-like {
+    background-color: $pastel-blue;
+    margin: 5px;
+    &:hover {
+        background-color: $pastel-accent;
+    }
+}
 .new-task-button {
     font-weight: bold;
     text-align: center;
     padding: 12px;
-    background-color: #007bff;
-    color: white;
+    background-color: $primary-color;
+    color: $white;
     border-radius: 8px;
-
     &:hover {
-        background-color: #0056b3;
+        background-color: $primary-dark;
     }
 }
-
 .button-group {
     display: flex;
     justify-content: space-between;
     gap: 20px;
     margin-top: 20px;
 }
-
-.styled-button {
-    padding: 12px 16px;
-    border: none;
-    border-radius: 8px;
-    cursor: pointer;
-    transition: background-color 0.3s ease;
-    font-size: 16px;
-    font-weight: bold;
+.btn-primary {
+    background-color: $btn-primary-bg;
+    color: $btn-primary-color;
+    &:hover {
+        background-color: $pastel-blue-dark;
+    }
 }
-
+.btn-tertiary, .pastel-btn-tertiary {
+    background-color: $secondary-color;
+    color: $primary-color;
+    border: 1px solid $primary-color;
+    &:hover {
+        background-color: $primary-color;
+        color: $white;
+    }
+}
 .submit-button {
-    background-color: #007bff;
-    color: #fff;
-
+    background-color: $btn-primary-bg;
+    color: $btn-primary-color;
     &:hover {
-        background-color: #0056b3;
+        background-color: $pastel-blue-dark;
     }
 }
-
 .reset-button {
-    background-color: #6c757d;
-    color: #fff;
-
+    background-color: $secondary-color;
+    color: $primary-color;
+    border: 1px solid $primary-color;
     &:hover {
-        background-color: #5a6268;
+        background-color: $primary-color;
+        color: $white;
     }
 }
-
 .error-message {
-    color: red;
-    font-size: 0.9rem;
+    color: $danger-color;
+    font-size: 0.95rem;
+    margin-top: 0.2rem;
+    text-align: left;
 }
 </style>

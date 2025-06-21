@@ -1,6 +1,6 @@
-@use "./partials/variables" as *;
+@use "./partials/_variables.scss" as *;
 
 body {
     background-color: $background-color;
-    color: $font-color;
+    color: $text-color;
 }

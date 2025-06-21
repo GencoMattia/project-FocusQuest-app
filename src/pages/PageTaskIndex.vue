@@ -30,17 +30,14 @@ export default {
 
 <template>
     <div class="task-list container py-5">
-        <!-- Header Section -->
         <header class="mb-5 text-center">
             <h1 class="display-4 text-primary">Elenco delle tue task</h1>
             <p class="lead">Organizza e gestisci le tue attività in modo efficace.</p>
-            <router-link :to="{ name: 'tasks.create' }" class="btn btn-primary btn-lg">
+            <router-link :to="{ name: 'tasks.create' }" class="btn btn-action btn-lg">
                 Aggiungi una nuova task
             </router-link>
         </header>
-
-        <!-- Task Table -->
-        <div v-if="tasks.length" class="table-responsive rounded shadow-sm">
+        <div v-if="tasks.length" class="table-responsive rounded shadow-sm pastel-table">
             <table class="table table-hover align-middle">
                 <thead class="table-primary text-center">
                     <tr>
@@ -64,7 +61,7 @@ export default {
                         <td>
                             <button
                                 @click="showTask(task.id)"
-                                class="btn btn-outline-primary btn-sm"
+                                class="btn btn-action btn-sm"
                             >
                                 Mostra
                             </button>
@@ -73,40 +70,31 @@ export default {
                 </tbody>
             </table>
         </div>
-
-        <!-- Empty State -->
-        <div v-else class="alert alert-warning text-center" role="alert">
+        <div v-else class="alert alert-warning text-center pastel-alert" role="alert">
             Nessuna task trovata. Inizia creando una nuova task!
         </div>
     </div>
 </template>
 
-<style lang="scss" scoped>
-@use "sass:color";
-/* Variabili per colori pastello */
-$primary-color: #a3d8f4;
-$secondary-color: #fdf5e6;
-$accent-color: #ffd5cd;
-$text-color: #4a4a4a;
-$white: #fff;
-
+<style scoped lang="scss">
+@use "../assets/partials/_variables.scss" as *;
 .task-list {
-    font-family: 'Poppins', sans-serif;
     color: $text-color;
-
     header {
         h1 {
             color: $primary-color;
         }
-        .btn-primary {
-            background-color: $primary-color;
-            border: none;
+        .btn-primary, .pastel-btn {
+            background-color: $btn-primary-bg;
+            color: $btn-primary-color;
             &:hover {
-                background-color: color.adjust($primary-color, $lightness: -10%);
+                background-color: $pastel-blue-dark;
             }
         }
     }
-
+    .pastel-table {
+        background-color: $secondary-color;
+    }
     .table {
         thead {
             background-color: $primary-color;
@@ -115,11 +103,11 @@ $white: #fff;
         tbody {
             tr {
                 &:hover {
-                    background-color: color.adjust($primary-color, $lightness: 40%);
+                    background-color: lighten($primary-color, 40%);
                 }
             }
         }
-        .btn-outline-primary {
+        .btn-outline-primary, .pastel-btn-outline {
             color: $primary-color;
             border-color: $primary-color;
             &:hover {
@@ -128,11 +116,24 @@ $white: #fff;
             }
         }
     }
-
-    .alert-warning {
+    .pastel-alert {
         background-color: $secondary-color;
         color: $text-color;
-        border: 1px solid color.adjust($primary-color, $lightness: 20%);
+        border: 1px solid lighten($primary-color, 20%);
     }
+}
+.btn-action {
+  background-color: $accent-color;
+  color: $white;
+  border: none;
+  border-radius: $btn-border-radius;
+  font-weight: bold;
+  letter-spacing: 0.5px;
+  padding: $btn-padding-y $btn-padding-x;
+  transition: background-color $transition-duration $transition-timing-function, color $transition-duration $transition-timing-function;
+  &:hover {
+    background-color: $accent-dark;
+    color: $white;
+  }
 }
 </style>

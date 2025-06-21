@@ -23,23 +23,26 @@ export default {
         <h1>Benvenuto, {{ store.loggedUser.name || user.name }} {{ store.loggedUser.surname || user.surname }}</h1>
         <router-link 
             :to="`/profile/${store.loggedUser.name || user.name}-${store.loggedUser.surname || user.surname}`" 
-            class="btn custom-button">
+            class="btn btn-action custom-button">
             Vai al mio profilo
         </router-link>
     </div>
 </template>
 
 <style lang="scss" scoped>
-@use "../assets/partials/variables" as *;
+@use "../assets/partials/_variables.scss" as *;
 
 .custom-button {
     padding: $btn-padding-y $btn-padding-x;
     border-radius: $btn-border-radius;
     font-size: $btn-font-size;
-    transition: background-color $transition-duration $transition-timing-function, transform 0.2s; // Transizioni
+    transition: background-color $transition-duration $transition-timing-function, transform 0.2s;
+    background-color: $btn-primary-bg;
+    color: $btn-primary-color;
 
     &:hover {
-        background-color: $primary-dark;
+        background-color: $pastel-blue-dark;
+        color: $white;
         transform: scale(1.05);
     }
 

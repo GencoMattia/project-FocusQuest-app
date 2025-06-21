@@ -1,3 +1,42 @@
+<template>
+    <div class="login-page">
+        <div class="login-container">
+            <h1 class="login-title">Welcome Back</h1>
+            <p class="login-subtitle">Please sign in to continue</p>
+            <form @submit.prevent="logInUser" class="login-form">
+                <div class="form-group">
+                    <label for="loginInputEmail" class="form-label">Email address</label>
+                    <input 
+                    v-model="userEmail" 
+                    type="text" 
+                    class="form-control" 
+                    id="loginInputEmail" 
+                    placeholder="Enter your email"
+                    @input="validateNativeEmail"
+                    required>
+                    <div v-if="errors.email" class="error-message">{{ errors.email }}</div>
+                </div>
+                <div class="form-group">
+                    <label for="loginInputPassword" class="form-label">Password</label>
+                    <input 
+                    v-model="userPassword" 
+                    type="password" 
+                    class="form-control" 
+                    id="loginInputPassword" 
+                    placeholder="Enter your password"
+                    required>
+                    <div v-if="errors.password" class="error-message">{{ errors.password }}</div>
+                </div>
+                <div v-if="errors.server" class="error-message">{{ errors.server }}</div>
+                <button type="submit" class="btn-submit pastel-btn">Sign In</button>
+            </form>
+            <div class="login-footer">
+                <p>Don't have an account? <router-link :to="{ name: 'register'}">Sign up here</router-link></p>
+            </div>
+        </div>
+    </div>
+</template>
+
 <script>
 import api from "@/api/axios";
 import { store } from "@/store";
@@ -86,140 +125,100 @@ export default {
 };
 </script>
 
-<template>
-    <div class="login-page">
-        <div class="login-container">
-            <h1 class="login-title">Welcome Back</h1>
-            <p class="login-subtitle">Please sign in to continue</p>
-            <form @submit.prevent="logInUser" class="login-form">
-                <!-- Input Email -->
-                <div class="form-group">
-                    <label for="loginInputEmail" class="form-label">Email address</label>
-                    <input 
-                    v-model="userEmail" 
-                    type="text" 
-                    class="form-control" 
-                    id="loginInputEmail" 
-                    placeholder="Enter your email"
-                    @input="validateNativeEmail"
-                    required>
-                    <!-- Show email error -->
-                    <div v-if="errors.email" class="error-message">{{ errors.email }}</div>
-                </div>
+<style scoped lang="scss">
+@use "../assets/partials/_variables.scss" as *;
 
-                <!-- Input Password -->
-                <div class="form-group">
-                    <label for="loginInputPassword" class="form-label">Password</label>
-                    <input 
-                    v-model="userPassword" 
-                    type="password" 
-                    class="form-control" 
-                    id="loginInputPassword" 
-                    placeholder="Enter your password"
-                    required>
-                    <!-- Show password error -->
-                    <div v-if="errors.password" class="error-message">{{ errors.password }}</div>
-                </div>
-
-                <!-- Show generic error -->
-                <div v-if="errors.server" class="error-message">{{ errors.server }}</div>
-
-                <!-- <div class="form-group form-check">
-                    <input type="checkbox" class="form-check-input" id="loginCheck">
-                    <label class="form-check-label" for="loginCheck">Remember me</label>
-                </div> -->
-
-                <button type="submit" class="btn-submit">Sign In</button>
-            </form>
-            <div class="login-footer">
-                <p>Don't have an account? <router-link :to="{ name: 'register'}">Sign up here</router-link></p>
-            </div>
-        </div>
-    </div>
-</template>
-
-<style scoped>
 .login-page {
+    min-height: 100vh;
     display: flex;
     justify-content: center;
     align-items: center;
-    height: 100vh;
-    background-color: #f5f5f5;
+    background: linear-gradient(135deg, $primary-color 30%, $pastel-accent 100%);
+    font-family: 'Poppins', sans-serif;
 }
 
 .login-container {
-    background-color: #fff;
-    padding: 2rem;
-    border-radius: 10px;
-    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+    background-color: $secondary-color;
+    padding: 2.5rem 2rem;
+    border-radius: 18px;
+    box-shadow: 0 4px 18px rgba(0, 0, 0, 0.10);
     text-align: center;
     width: 100%;
-    max-width: 400px;
+    max-width: 420px;
+    margin: 2rem auto;
 }
 
 .login-title {
-    font-size: 24px;
+    font-size: 2.2rem;
     font-weight: bold;
-    color: #333;
+    color: $primary-color;
+    margin-bottom: 0.5rem;
 }
 
 .login-subtitle {
-    font-size: 16px;
-    color: #777;
-    margin-bottom: 1.5rem;
+    font-size: 1.1rem;
+    color: $accent-color;
+    margin-bottom: 2rem;
 }
 
 .form-group {
-    margin-bottom: 1rem;
+    margin-bottom: 1.2rem;
+    text-align: left;
 }
 
 .form-control {
     width: 100%;
-    padding: 0.75rem;
-    font-size: 14px;
-    border: 1px solid #ccc;
-    border-radius: 5px;
-    box-shadow: inset 0 2px 4px rgba(0, 0, 0, 0.05);
-    transition: border-color 0.3s ease, box-shadow 0.3s ease;
+    padding: 0.85rem;
+    font-size: 1rem;
+    border: 1px solid $primary-color;
+    border-radius: 8px;
+    box-shadow: 0 2px 8px rgba(163, 216, 244, 0.08);
+    transition: border-color 0.3s $transition-timing-function, box-shadow 0.3s $transition-timing-function;
+    background-color: $white;
 }
 
 .form-control:focus {
-    border-color: #007bff;
-    box-shadow: 0 0 8px rgba(0, 123, 255, 0.25);
+    border-color: $accent-color;
+    box-shadow: 0 0 8px $accent-color;
 }
 
-.btn-submit {
+.btn-submit, .pastel-btn {
     width: 100%;
-    padding: 0.75rem;
-    font-size: 16px;
-    background-color: #007bff;
-    color: #fff;
+    padding: $btn-padding-y $btn-padding-x;
+    font-size: $btn-font-size;
+    background-color: $btn-primary-bg;
+    color: $btn-primary-color;
     border: none;
-    border-radius: 5px;
+    border-radius: $btn-border-radius;
     cursor: pointer;
-    transition: background-color 0.3s ease;
-}
-
-.btn-submit:hover {
-    background-color: #0056b3;
+    transition: background-color $transition-duration $transition-timing-function;
+    margin-top: 1rem;
+    font-weight: bold;
+    letter-spacing: 0.5px;
+    &:hover {
+        background-color: $pastel-blue-dark;
+    }
 }
 
 .login-footer {
-    margin-top: 1.5rem;
-    font-size: 14px;
-}
+    margin-top: 2rem;
+    font-size: 1rem;
+    color: $text-color;
 
-.login-footer a {
-    color: #007bff;
-    text-decoration: none;
-}
-
-.login-footer a:hover {
-    text-decoration: underline;
+    a {
+        color: $primary-color;
+        text-decoration: underline;
+        transition: color $transition-duration $transition-timing-function;
+        &:hover {
+            color: $accent-color;
+        }
+    }
 }
 
 .error-message {
-    color: red;
-    font-size: 0.9rem;
+    color: $danger-color;
+    font-size: 0.95rem;
+    margin-top: 0.2rem;
+    text-align: left;
 }
 </style>
