@@ -170,38 +170,37 @@ export default {
             console.log('[createNewTask] Called, isSubmitting:', this.isSubmitting);
             if (this.isSubmitting) return;
             if (!this.validateInput()) {
-                console.log('[createNewTask] Validation failed:', this.errors);
-                return; // Stop the request if the validation fails
+                return;
             }
             this.isSubmitting = true;
             const estimatedTime = this.getTotalMinutes(this.data.formHours, this.data.formMinutes);
 
-            api.post('tasks/create', {
-                name: this.data.formName,
-                description: this.data.formDescription,
-                estimated_time: estimatedTime,
-                category_id: this.data.formCategoryId,
-                priority_id: this.data.formPriorityId,
-                deadline: this.data.formDeadline,
-            })
-                .then((response) => {
-                    console.log('[createNewTask] Task created successfully:', response.data);
-                    this.resetForm();
-                })
-                .catch((error) => {
-                    if (error.response && error.response.data) {
-                        this.errors.server = "La Creazione della Task non è andata a buon fine";
-                        console.error('[createNewTask] Server response:', error.response.data);
-                    } else if (error.request) {
-                        console.error('[createNewTask] No response received:', error.request);
-                    } else {
-                        console.error('[createNewTask] Error:', error.message);
-                    }
-                })
-                .finally(() => {
-                    console.log('[createNewTask] Request finished, setting isSubmitting to false');
-                    this.isSubmitting = false;
+            try {
+                const response = await api.post('tasks/create', {
+                    name: this.data.formName,
+                    description: this.data.formDescription,
+                    estimated_time: estimatedTime,
+                    category_id: this.data.formCategoryId,
+                    priority_id: this.data.formPriorityId,
+                    deadline: this.data.formDeadline,
                 });
+                // Redirect to the newly created task page
+                if (response.data && response.data.task && response.data.task.id) {
+                    this.$router.push({ name: 'tasks.show', params: { id: response.data.task.id } });
+                }
+                this.resetForm();
+            } catch (error) {
+                if (error.response && error.response.data && error.response.data.errors) {
+                    Object.keys(error.response.data.errors).forEach(field => {
+                        const err = error.response.data.errors[field];
+                        this.errors[field] = Array.isArray(err) ? err[0] : err;
+                    });
+                } else {
+                    this.errors.server = "Errore durante la creazione della task";
+                }
+            } finally {
+                this.isSubmitting = false;
+            }
         },
 
         resetForm() {
