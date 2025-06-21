@@ -70,10 +70,9 @@ export default {
 
         submitForm() {
             if (!this.validateInput()) {
-                return; //Stop the request if the validation fails
+                return;
             }
-
-            // console.log('Dati pronti per essere inviati', this.momentData)
+            this.errors = {};
             api.post(`moments/tasks/${this.task.id}/create`, {
                 name: this.momentData.name,
                 task_id: this.task.id,
@@ -82,15 +81,22 @@ export default {
                 moments_type_id: this.momentData.moments_type_id,
             })
                 .then((response) => {
-                    console.log('momento creato con successo')
+                    this.momentData.name = '';
+                    this.momentData.message = '';
+                    this.momentData.emotion_id = 0;
+                    this.momentData.moments_type_id = 0;
+                    this.errors = {};
+                    // Optionally, show a success message
                 }).catch((error) => {
-                    if (error.response && error.response.data) {
+                    if (error.response && error.response.data && error.response.data.errors) {
+                        Object.keys(error.response.data.errors).forEach(field => {
+                            const err = error.response.data.errors[field];
+                            this.errors[field] = Array.isArray(err) ? err[0] : err;
+                        });
+                    } else {
                         this.errors.server = "Errore durante la creazione del momento";
                     }
-
-                    console.log("Login Error:", error.response.data);
                 });
-
         }
 
     },

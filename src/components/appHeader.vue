@@ -12,6 +12,7 @@ export default {
         logOutUser() {
             localStorage.removeItem("token");
             this.isAuthenticated = false;
+            this.store.loggedUser = { id: '', name: '', surname: '', email: '' };
             this.$router.push({ name: 'home' });
         },
 
@@ -28,6 +29,7 @@ export default {
 
     mounted() {
         this.checkAuthStatus();
+        this.$watch(() => this.store.loggedUser, () => this.checkAuthStatus(), { deep: true });
         console.log('utente loggato', this.store.loggedUser);
     }
 };

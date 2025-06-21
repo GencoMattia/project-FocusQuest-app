@@ -36,7 +36,6 @@ export default {
     },
     methods: {
         getMomentData() {
-            // Usa this per accedere alle props
             api.get('moments/get-card-data', {
                 params: {
                     emotion_id: this.emotion_id,
@@ -45,11 +44,12 @@ export default {
                 }
             })
             .then(response => {
-                console.log('Risultato del caricamento del componente: ', response.data);
-                this.emotion = response.data.moment_emotion
-                this.moments_type = response.data.moment_moments_type
+                this.emotion = response.data.moment_emotion || {};
+                this.moments_type = response.data.moment_moments_type || {};
             })
             .catch(error => {
+                this.emotion = {};
+                this.moments_type = {};
                 console.error(error);
             });
         }

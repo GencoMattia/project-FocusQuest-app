@@ -11,7 +11,8 @@ export default {
     props: {
         user: {
             type: Object,
-            required: true
+            required: false,
+            default: () => ({})
         }
     }
 };
@@ -19,9 +20,9 @@ export default {
 
 <template>
     <div>
-        <h1>Benvenuto, {{ store.loggedUser.name }} {{ store.loggedUser.surname }}</h1>
+        <h1>Benvenuto, {{ store.loggedUser.name || user.name }} {{ store.loggedUser.surname || user.surname }}</h1>
         <router-link 
-            :to="`/profile/${store.loggedUser.name}-${store.loggedUser.surname}`" 
+            :to="`/profile/${store.loggedUser.name || user.name}-${store.loggedUser.surname || user.surname}`" 
             class="btn custom-button">
             Vai al mio profilo
         </router-link>

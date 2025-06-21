@@ -11,9 +11,10 @@ export default {
             api
                 .get('tasks/index')
                 .then(response => {
-                    this.tasks = response.data;
+                    this.tasks = Array.isArray(response.data) ? response.data : (response.data.tasks || []);
                 })
                 .catch(error => {
+                    this.tasks = [];
                     console.error(error);
                 });
         },

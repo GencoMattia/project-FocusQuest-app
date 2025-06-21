@@ -39,6 +39,7 @@ const router = createRouter({
       name: 'profile',
       component: PageProfile,
       meta: { requireAuth: true },
+      props: true
     },
     {
       path: '/tasks',
@@ -69,10 +70,9 @@ const router = createRouter({
 
 router.beforeEach((to, from, next) => {
   const token = localStorage.getItem("token");
-
   if (to.matched.some(record => record.meta.requireAuth)) {
     if (!token) {
-      next({ name: "login" });
+      next({ name: "login", query: { redirect: to.fullPath } });
     } else {
       next();
     }

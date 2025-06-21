@@ -1,8 +1,12 @@
 import axios from "axios";
 
 const api = axios.create({
-  baseURL: "http://127.0.0.1:8000/api/",
+  baseURL: import.meta.env.VITE_API_BASE_URL || "http://127.0.0.1:8000/api/",
   timeout: 10000,
+  headers: {
+    "Content-Type": "application/json",
+    Accept: "application/json",
+  },
 });
 
 // Interceptor per aggiungere il token JWT a tutte le richieste
@@ -21,9 +25,12 @@ api.interceptors.request.use(
 
 // Interceptor per errori (puoi personalizzare)
 api.interceptors.response.use(
-  response => response,
-  error => {
-    // Puoi gestire errori globali qui
+  (response) => response,
+  (error) => {
+    if (error.response && error.response.status === 401) {
+      localStorage.removeItem("token");
+      window.location.href = "/login";
+    }
     return Promise.reject(error);
   }
 );

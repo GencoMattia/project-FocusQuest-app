@@ -7,15 +7,29 @@ export default {
             store,
         };
     },
+    computed: {
+        userName() {
+            return this.store.loggedUser.name || 'Utente';
+        },
+        userSurname() {
+            return this.store.loggedUser.surname || '';
+        },
+        userEmail() {
+            return this.store.loggedUser.email || '';
+        },
+        userId() {
+            return this.store.loggedUser.id || '';
+        }
+    },
 };
 </script>
 
 <template>
     <div class="profile-container">
-        <h1 class="profile-title">Profilo di {{ this.store.loggedUser.name }} {{ this.store.loggedUser.surname }}</h1>
+        <h1 class="profile-title">Profilo di {{ userName }} {{ userSurname }}</h1>
         <div class="profile-details">
-            <p><strong>Email:</strong> {{ this.store.loggedUser.email }}</p>
-            <p><strong>User ID:</strong> {{ this.store.loggedUser.id }}</p>
+            <p><strong>Email:</strong> {{ userEmail }}</p>
+            <p><strong>User ID:</strong> {{ userId }}</p>
         </div>
     </div>
 </template>

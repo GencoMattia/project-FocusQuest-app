@@ -55,33 +55,30 @@ export default {
 
         logInUser(event) {
             event.preventDefault();
-
             if (!this.validateInput()) {
-                return; //Stop the request if the validation fails
+                return;
             }
-
+            this.errors = {};
             api.post("auth/login", {
                 email: this.userEmail,
                 password: this.userPassword
             })
                 .then((response) => {
                     localStorage.setItem("token", response.data.access_token);
-                    console.log(response);
-
-                    //Update store.js data
-                    this.store.loggedUser.name = response.data.name
-                    this.store.loggedUser.surname = response.data.surname
-                    this.store.loggedUser.email = response.data.user.email
-                    this.store.loggedUser.id = response.data.user.id
-
-                    //Redirect to Dashboard page
+                    this.store.loggedUser.name = response.data.name || response.data.user.name;
+                    this.store.loggedUser.surname = response.data.surname || response.data.user.surname;
+                    this.store.loggedUser.email = response.data.user.email;
+                    this.store.loggedUser.id = response.data.user.id;
+                    this.userEmail = "";
+                    this.userPassword = "";
+                    this.errors = {};
                     this.$router.push("/dashboard");
                 }).catch((error) => {
                     if (error.response && error.response.data) {
                         this.errors.server = "Email o password errati";
+                    } else {
+                        this.errors.server = "Errore di connessione";
                     }
-
-                    console.log("Login Error:", error.response.data);
                 });
         }
     }
