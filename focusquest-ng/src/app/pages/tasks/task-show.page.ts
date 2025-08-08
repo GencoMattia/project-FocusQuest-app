@@ -24,16 +24,16 @@ import { Task, Moment } from '../../core/models/task.model';
             <h1 class="text-2xl font-semibold mt-1">{{ t.name }}</h1>
             <div class="flex flex-wrap gap-2 mt-2 text-sm">
               <span *ngIf="t.category" class="inline-flex items-center gap-1 px-2 py-1 rounded-full border">
-                <span class="w-2 h-2 rounded-full" [style.background]="t.category?.color"></span>
-                {{ t.category?.name }}
+                <span class="w-2 h-2 rounded-full" [style.background]="t.category.color"></span>
+                {{ t.category.name }}
               </span>
               <span *ngIf="t.priority" class="inline-flex items-center gap-1 px-2 py-1 rounded-full border">
-                <span class="w-2 h-2 rounded-full" [style.background]="t.priority?.color"></span>
-                {{ t.priority?.name }}
+                <span class="w-2 h-2 rounded-full" [style.background]="t.priority.color"></span>
+                {{ t.priority.name }}
               </span>
               <span *ngIf="t.status" class="inline-flex items-center gap-1 px-2 py-1 rounded-full border">
-                <span class="w-2 h-2 rounded-full" [style.background]="t.status?.color"></span>
-                {{ t.status?.name }}
+                <span class="w-2 h-2 rounded-full" [style.background]="t.status.color"></span>
+                {{ t.status.name }}
               </span>
             </div>
           </div>
