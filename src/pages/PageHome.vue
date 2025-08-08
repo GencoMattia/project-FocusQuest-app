@@ -1,103 +1,103 @@
 <script>
+import { RouterLink } from 'vue-router';
+
 export default {
-    data() {
-        return {};
-    }
+    components: { RouterLink },
 };
 </script>
 
 <template>
-    <div class="homepage container py-5">
-        <!-- Hero Section -->
-        <section class="hero d-flex flex-column-reverse flex-lg-row align-items-center bg-primary text-white p-5 rounded mb-5 shadow-lg">
-            <div class="hero-text col-lg-6 mb-4 mb-lg-0">
-                <p class="lead">Your playful and productive task management solution.</p>
-                <h1 class="display-4">Welcome to FocusQuest</h1>
-                <a href="#features" class="btn btn-action btn-lg mt-3">Explore Features</a>
-            </div>
-            <div class="hero-image col-lg-6">
-                <img src="../assets/img/Jumbo-img.jpg" alt="Task management illustration" class="img-fluid rounded shadow-sm">
-            </div>
-        </section>
-
-        <!-- Features Section -->
-        <section id="features" class="features bg-light py-5 rounded shadow-sm mb-5">
-            <h2 class="text-center mb-5 text-primary">Key Features</h2>
-            <div class="row gx-4 gy-4">
-                <div class="col-md-4">
-                    <div class="card h-100 shadow-sm">
-                        <div class="card-body">
-                            <h3 class="card-title text-primary">Task Prioritization</h3>
-                            <p class="card-text">Easily prioritize tasks based on urgency and deadlines.</p>
-                        </div>
+    <main class="home">
+        <!-- HERO -->
+        <section class="hero container">
+            <div class="row align-items-center g-4">
+                <div class="col-lg-6 order-2 order-lg-1">
+                    <p class="eyebrow">Tasking, ma più umano</p>
+                    <h1 class="title">Rimani focussato, conquista le tue missioni</h1>
+                    <p class="subtitle">FocusQuest unisce priorità, tempo e stato d’animo per aiutarti a finire le cose con serenità.</p>
+                    <div class="cta-group">
+                        <RouterLink class="btn btn-primary btn-lg" :to="{ name: 'dashboard' }">Vai alla Dashboard</RouterLink>
+                        <RouterLink class="btn btn-outline-primary btn-lg" :to="{ name: 'tasks.create' }">Crea una Task</RouterLink>
                     </div>
+                    <ul class="hero-points">
+                        <li>Priorità intelligenti in base al tempo disponibile</li>
+                        <li>Traccia emozioni e momenti chiave</li>
+                        <li>UI chiara, leggera, accessibile</li>
+                    </ul>
                 </div>
-                <div class="col-md-4">
-                    <div class="card h-100 shadow-sm">
-                        <div class="card-body">
-                            <h3 class="card-title text-primary">Emotional Feedback</h3>
-                            <p class="card-text">Track your emotional state while working on tasks.</p>
-                        </div>
-                    </div>
-                </div>
-                <div class="col-md-4">
-                    <div class="card h-100 shadow-sm">
-                        <div class="card-body">
-                            <h3 class="card-title text-primary">Gamified Progress</h3>
-                            <p class="card-text">Earn achievements as you complete tasks and reach your goals.</p>
-                        </div>
+                <div class="col-lg-6 order-1 order-lg-2">
+                    <div class="hero-media">
+                        <img src="../assets/img/Jumbo-img.jpg" alt="Illustrazione gestione task" class="img-fluid" />
                     </div>
                 </div>
             </div>
         </section>
 
-        <!-- About Section -->
-        <section id="about" class="about py-5 mb-5">
-            <div class="container">
-                <h2 class="text-center mb-4 text-accent">About FocusQuest</h2>
-                <p class="text-center fs-5">
-                    FocusQuest is designed to help individuals, especially those with ADHD, stay organized,
-                    motivated, and in tune with their emotional well-being. It’s not just about getting things done,
-                    it’s about making the journey enjoyable and rewarding.
-                </p>
+        <!-- HIGHLIGHTS -->
+        <section class="highlights container">
+            <div class="row row-cols-1 row-cols-md-3 g-3">
+                <div class="col">
+                    <article class="h-card">
+                        <h3>Prioritizzazione</h3>
+                        <p>Suggerimenti dinamici in base al tempo: poco o molto, trovi la prossima mossa.</p>
+                    </article>
+                </div>
+                <div class="col">
+                    <article class="h-card">
+                        <h3>Momenti & Emozioni</h3>
+                        <p>Registra momenti ed emozioni per capire come lavori meglio.</p>
+                    </article>
+                </div>
+                <div class="col">
+                    <article class="h-card">
+                        <h3>Design Inclusivo</h3>
+                        <p>Contrasto elevato, focus ring, e componenti coerenti con il tema.</p>
+                    </article>
+                </div>
             </div>
         </section>
 
-        <!-- Footer -->
-        <footer class="footer bg-primary text-white py-3 text-center rounded">
-            <p>&copy; 2024 FocusQuest. All rights reserved.</p>
-        </footer>
-    </div>
+        <!-- CTA STRIP -->
+        <section class="cta-strip">
+            <div class="container d-flex flex-column flex-md-row align-items-center justify-content-between gap-3">
+                <div>
+                    <h2 class="strip-title">Inizia adesso</h2>
+                    <p class="strip-sub">Crea la tua prima task o organizza la giornata in pochi secondi.</p>
+                </div>
+                <div class="d-flex gap-2">
+                    <RouterLink class="btn btn-primary" :to="{ name: 'tasks.create' }">Nuova Task</RouterLink>
+                    <RouterLink class="btn btn-outline-primary" :to="{ name: 'tasks.index' }">Vai alle Task</RouterLink>
+                </div>
+            </div>
+        </section>
+    </main>
 </template>
 
 
-<style lang="scss" scoped>
+<style scoped lang="scss">
 @use "../assets/partials/_variables.scss" as *;
 
-.homepage {
-    font-family: 'Poppins', sans-serif;
-    color: $text-color;
-    text-align: center;
+.home { font-family: $font-family-base; color: $text-color; }
 
-    .hero {
-        background: linear-gradient(135deg, $primary-color 30%, $accent-color 100%);
-    }
+.hero { padding: 3.5rem 0; }
+.eyebrow { color: $accent-color; font-weight: 700; margin: 0 0 .25rem; }
+.title { font-size: clamp(2rem, 4vw, 3rem); font-weight: 800; line-height: 1.1; margin: 0 0 .5rem; color: $text-color; text-shadow: 0 1px 2px rgba(0,0,0,0.08); }
+.subtitle { font-size: 1.125rem; color: $text-color; opacity: .85; margin-bottom: 1rem; }
+.cta-group { display: flex; gap: .75rem; flex-wrap: wrap; margin: 1rem 0 1.25rem; }
+.cta-group .btn-primary { background-color: $btn-primary-bg; border: none; }
+.cta-group .btn-outline-primary { color: #fff; border-color: rgba(255,255,255,.6); background-color: rgba(255,255,255,.08); }
+.cta-group .btn-outline-primary:hover { background-color: rgba(255,255,255,.15); color: #fff; }
+.hero-points { list-style: none; padding: 0; margin: 0; display: grid; gap: .4rem; color: $text-color; }
 
-    .features {
-        background-color: $secondary-color;
-    }
+.hero-media { position: relative; }
+.hero-media img { border-radius: var(--radius-lg); box-shadow: var(--shadow-2); }
 
-    .about {
-        color: $text-color;
+.highlights { padding: 2rem 0 3rem; }
+.h-card { background: var(--color-surface); border-radius: var(--radius-md); padding: 1.25rem; box-shadow: var(--shadow-1); height: 100%; }
+.h-card h3 { color: $primary-color; font-weight: 700; font-size: 1.25rem; margin: 0 0 .25rem; }
+.h-card p { margin: 0; }
 
-        .text-accent {
-            color: $accent-color;
-        }
-    }
-
-    .footer {
-        background-color: $primary-color;
-        color: $white;
-    }
-}
+.cta-strip { background: color-mix(in oklab, var(--color-surface), var(--color-primary) 10%); padding: 1.25rem 0; border-top: 1px solid color-mix(in oklab, var(--color-primary), #000 6%); border-bottom: 1px solid color-mix(in oklab, var(--color-primary), #000 6%); }
+.strip-title { margin: 0; font-weight: 800; }
+.strip-sub { margin: 0; color: $color-muted; }
 </style>

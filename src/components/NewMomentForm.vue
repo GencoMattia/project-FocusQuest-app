@@ -25,13 +25,13 @@ export default {
             // Task's name validator
             if (!this.momentData.name) {
                 this.errors.name = "Ogni momento deve avere un nome";
-            } else if (this.momentData.name.length < 3 || this.momentData.name.length > 25) {
-                this.errors.name = "Il nome deve essere compreso tra 3 e 25 caratteri";
+            } else if (this.momentData.name.length < 3 || this.momentData.name.length > 150) {
+                this.errors.name = "Il nome deve essere compreso tra 3 e 150 caratteri";
             }
 
             // Task's message validator
             if (this.momentData.message.length > 150) {
-                this.errors.message = "Il messaggio può essere lungo al massimo 150 caratteri"
+                this.errors.message = "Il messaggio può essere lungo al massimo 150 caratteri";
             }
 
             // Emotion validator
@@ -52,20 +52,24 @@ export default {
         },
 
         getFormData() {
-            const task_id = this.$route.params.id
-
-            api.get('moments/form-data', {
-                params: {
-                    task_id: task_id,
-                }
-            })
+            const task_id = this.$route.params.id;
+            const params = {};
+            if (task_id) params.task_id = task_id; // now optional
+            api.get('moments/form-data', { params })
                 .then((response) => {
-                    console.log(response);
-                    this.emotions = response.data.data.emotions
-                    this.moment_types = response.data.data.moment_types
-                    this.task = response.data.data.task[0]
-                    this.momentData.task_id = this.task.id
+                    const data = response.data?.data || {};
+                    this.emotions = data.emotions || [];
+                    this.moment_types = data.moment_types || [];
+                    // backend returns task or null
+                    this.task = data.task || {};
                 })
+                .catch((e) => {
+                    if (e?.response?.status === 404) {
+                        this.errors.server = "Task non disponibile o non appartenente all'utente.";
+                    } else {
+                        this.errors.server = "Errore nel caricamento dei dati del form.";
+                    }
+                });
         },
 
         submitForm() {
@@ -73,9 +77,8 @@ export default {
                 return;
             }
             this.errors = {};
-            api.post(`moments/tasks/${this.task.id}/create`, {
+            api.post(`moments/tasks/${this.task.id}/moments`, {
                 name: this.momentData.name,
-                task_id: this.task.id,
                 message: this.momentData.message,
                 emotion_id: this.momentData.emotion_id,
                 moments_type_id: this.momentData.moments_type_id,
@@ -88,7 +91,9 @@ export default {
                     this.errors = {};
                     // Optionally, show a success message
                 }).catch((error) => {
-                    if (error.response && error.response.data && error.response.data.errors) {
+                    if (error.response && error.response.status === 404) {
+                        this.errors.server = "Task non disponibile o non appartenente all'utente.";
+                    } else if (error.response && error.response.status === 422 && error.response.data?.errors) {
                         Object.keys(error.response.data.errors).forEach(field => {
                             const err = error.response.data.errors[field];
                             this.errors[field] = Array.isArray(err) ? err[0] : err;
@@ -111,9 +116,8 @@ export default {
     <div class="moment-form-page">
         <div class="moment-form-container">
             <h1 class="moment-form-title">Crea un nuovo Momento</h1>
-            <h2 class="moment-form-subtitle">per la task: {{ task.name }}</h2>
+            <h2 class="moment-form-subtitle">per la task: {{ task?.name || '—' }}</h2>
             <form @submit.prevent="submitForm" class="moment-form">
-                <input type="hidden" name="task_id" :value="task.id">
                 <div class="mb-3">
                     <label for="name">Nome Momento</label>
                     <input type="text" name="name" id="moment-form-name" v-model="momentData.name"
@@ -168,11 +172,11 @@ export default {
     display: flex;
     justify-content: center;
     align-items: center;
-    background: linear-gradient(135deg, $primary-color 30%, $pastel-accent 100%);
+    background: linear-gradient(135deg, var(--gradient-start) 30%, var(--gradient-end) 100%);
     font-family: 'Poppins', sans-serif;
 }
 .moment-form-container {
-    background-color: $secondary-color;
+    background-color: $surface-color;
     padding: 2.5rem 2rem;
     border-radius: 18px;
     box-shadow: 0 4px 18px rgba(0, 0, 0, 0.10);
@@ -196,22 +200,23 @@ export default {
     width: 100%;
     padding: 0.85rem;
     font-size: 1rem;
-    border: 1px solid $primary-color;
+    border: 1px solid rgba(0,0,0,0.08);
     border-radius: 8px;
-    box-shadow: 0 2px 8px rgba(163, 216, 244, 0.08);
+    box-shadow: none;
     transition: border-color 0.3s $transition-timing-function, box-shadow 0.3s $transition-timing-function;
-    background-color: $white;
+    background-color: $surface-color;
+    color: $text-color;
     margin-bottom: 0.5rem;
 }
 .form-control:focus, .form-select:focus {
-    border-color: $accent-color;
-    box-shadow: 0 0 8px $accent-color;
+    border-color: $primary-color;
+    box-shadow: var(--focus-ring);
 }
 .btn-primary {
     background-color: $btn-primary-bg;
     color: $btn-primary-color;
     &:hover {
-        background-color: $pastel-blue-dark;
+        background-color: $primary-dark;
     }
 }
 .error-message {

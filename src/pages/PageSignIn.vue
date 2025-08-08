@@ -187,7 +187,7 @@ export default {
     display: flex;
     justify-content: center;
     align-items: center;
-    background: linear-gradient(135deg, $primary-color 30%, $pastel-accent 100%);
+    background: linear-gradient(135deg, $primary-color 30%, $accent-color 100%);
     font-family: 'Poppins', sans-serif;
 }
 
@@ -228,7 +228,7 @@ export default {
     border-radius: 8px;
     box-shadow: 0 2px 8px rgba(163, 216, 244, 0.08);
     transition: border-color 0.3s $transition-timing-function, box-shadow 0.3s $transition-timing-function;
-    background-color: $white;
+    background-color: $surface-color;
 }
 
 .form-control:focus {
@@ -250,9 +250,7 @@ export default {
     font-weight: bold;
     letter-spacing: 0.5px;
 
-    &:hover {
-        background-color: $pastel-blue-dark;
-    }
+    &:hover { background-color: $primary-dark; }
 }
 
 .text-danger {
@@ -262,10 +260,7 @@ export default {
     text-align: left;
 }
 
-.form-text {
-    color: $secondary-color;
-    font-size: 0.85rem;
-}
+.form-text { color: $color-muted; font-size: 0.85rem; }
 
 .register-footer {
     margin-top: 2rem;

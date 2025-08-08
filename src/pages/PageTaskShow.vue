@@ -1,217 +1,294 @@
 <template>
-    <div class="task-detail container py-5">
+    <div class="task-show container py-4">
         <div class="row justify-content-center">
-            <div class="col-md-8">
-                <div v-if="task" class="card shadow rounded pastel-card task-detail-card">
-                    <div class="card-header text-white" :style="{ backgroundColor: task.category?.color }">
-                        Categoria: {{ task.category?.name }}
-                    </div>
+            <div class="col-lg-9">
+
+            <!-- Back link moved into header for better visual consistency -->
+
+                <!-- Loading state -->
+                <div v-if="isLoading" class="card shadow-sm" aria-busy="true">
                     <div class="card-body">
-                        <h5 class="card-title text-primary">{{ task.name }}</h5>
-                        <p class="card-text text-secondary">{{ task.description }}</p>
-                        <ul class="list-group list-group-flush mb-5">
-                            <li class="list-group-item">
-                                <strong>Priorità:</strong>
-                                <span class="badge rounded-pill" :style="{ backgroundColor: task.priority?.color }">
-                                    {{ task.priority?.name }}
-                                </span>
-                            </li>
-                            <li class="list-group-item">
-                                <strong>Stato:</strong>
-                                <span class="badge rounded-pill" :style="{ backgroundColor: task.status?.color }">
-                                    {{ task.status?.name }}
-                                </span>
-                            </li>
-                            <li class="list-group-item">
-                                <strong>Tempo stimato:</strong> {{ task.estimated_time }} minuti
-                            </li>
-                            <li class="list-group-item" v-if="task.started_at">
-                                <strong>Iniziato il:</strong> {{ task.started_at }}
-                            </li>
-                        </ul>
-                        <div v-if="moment_card_data && moment_card_data.length" class="moment-cards-container d-flex justify-content-around mb-3">
-                            <MomentCard v-for="moment_card in moment_card_data" 
-                            :key="moment_card.id"
-                            :id="moment_card.id"
-                            :task_id="moment_card.task_id"
-                            :moments_type_id="moment_card.moments_type_id"
-                            :emotion_id="moment_card.emotion_id"
-                            :name="moment_card.name"
-                            :message="moment_card.message"
-                            />
+                        <div class="fq-skeleton mb-3" style="height:24px;width:60%"></div>
+                        <div class="fq-skeleton mb-2" style="height:14px;width:90%"></div>
+                        <div class="fq-skeleton mb-2" style="height:14px;width:85%"></div>
+                        <div class="fq-skeleton mb-2" style="height:14px;width:70%"></div>
+                    </div>
+                </div>
+
+                <!-- Error state -->
+            <div v-else-if="error" class="alert alert-warning" role="alert">{{ error }}</div>
+
+                <!-- Content -->
+                <div v-else-if="task" class="card task-card shadow-sm" :style="{ '--accent': task.category?.color || 'var(--color-primary)' }">
+                    <div class="card-body">
+                        <!-- Header -->
+                                    <div class="d-flex align-items-start justify-content-between gap-3 task-header">
+                                        <div class="flex-grow-1">
+                                            <RouterLink class="btn btn-sm btn-outline-primary back-btn mb-2" :to="{ name: 'tasks.index' }" aria-label="Torna alle Task">← Indietro</RouterLink>
+                                <h1 class="h3 mb-1 task-title">{{ task.name }}</h1>
+                                <div class="d-flex flex-wrap gap-2 align-items-center mt-2">
+                                    <span v-if="task.category" class="chip" :title="`Categoria: ${task.category.name}`">
+                                        <span class="chip-dot" :style="{ backgroundColor: task.category.color }" aria-hidden="true"></span>
+                                        {{ task.category.name }}
+                                    </span>
+                                    <span v-if="task.priority" class="chip" :title="`Priorità: ${task.priority.name}`">
+                                        <span class="chip-dot" :style="{ backgroundColor: task.priority.color }" aria-hidden="true"></span>
+                                        {{ task.priority.name }}
+                                    </span>
+                                    <span v-if="task.status" class="chip" :title="`Stato: ${task.status.name}`">
+                                        <span class="chip-dot" :style="{ backgroundColor: task.status.color }" aria-hidden="true"></span>
+                                        {{ task.status.name }}
+                                    </span>
+                                </div>
+                            </div>
+
+                            <div class="text-end">
+                                <div class="btn-group flex-wrap" role="group" aria-label="Azioni task">
+                                    <button v-if="showStart" class="btn btn-primary" :disabled="isUpdating" @click="startTask">{{ startLabel }}</button>
+                                    <button v-if="showStop" class="btn btn-outline-secondary" :disabled="isUpdating" @click="stopTask">Interrompi</button>
+                                    <button class="btn btn-success" :disabled="isUpdating" @click="completeTask">Completa</button>
+                                    <RouterLink class="btn btn-info" :to="{ name: 'moments.create', params: { id: task.id } }">Aggiungi Momento</RouterLink>
+                                </div>
+                            </div>
                         </div>
-                    </div>
-                    <div class="card-footer text-center pastel-footer">
-                        <button class="btn btn-start me-2 pastel-btn" @click="modifyTaskStatus(2, task.id)">Avvia Task</button>
-                        <button v-if="task.status_id == 4" class="btn btn-secondary me-2 pastel-btn" @click="modifyTaskStatus(2, task.id)">Riavvia Task</button>
-                        <button v-if="task.status_id == 2" class="btn btn-stop me-2 pastel-btn" @click="modifyTaskStatus(4, task.id)">Interrompi Task</button>
-                        <button class="btn btn-complete me-2 pastel-btn" @click="modifyTaskStatus(3, task.id)">Completa Task</button>
-                        <button class="btn btn-action pastel-btn" >
-                            <RouterLink :to="{ name: 'moments.create', params: { id: task.id } }">Aggiungi un Momento</RouterLink>
-                        </button>
+
+                        <!-- Meta -->
+                        <div class="row g-3 mt-3 task-meta" role="list">
+                            <div class="col-md-4" role="listitem">
+                                <div class="meta-item">
+                                    <div class="label">Tempo stimato</div>
+                                    <div class="value">{{ task.estimated_time }} min<span v-if="task.estimated_time"> ({{ formatEstimated(task.estimated_time) }})</span></div>
+                                </div>
+                            </div>
+                            <div class="col-md-4" role="listitem" v-if="task.started_at">
+                                <div class="meta-item">
+                                    <div class="label">Iniziato</div>
+                                    <div class="value">{{ formatDate(task.started_at) }}</div>
+                                </div>
+                            </div>
+                            <div class="col-md-4" role="listitem" v-if="task.deadline">
+                                <div class="meta-item">
+                                    <div class="label">Scadenza</div>
+                                    <div class="value">{{ formatDate(task.deadline) }}</div>
+                                </div>
+                            </div>
+                        </div>
+
+                                    <!-- Completion summary -->
+                                    <section v-if="completionSummary" class="mt-3">
+                                        <div class="alert alert-info mb-0">
+                                            <div class="fw-bold mb-1">{{ completionSummary.message }}</div>
+                                            <ul class="mb-0 ps-3">
+                                                <li v-if="completionSummary.total_task_time"><strong>Tempo totale:</strong> {{ completionSummary.total_task_time }}</li>
+                                                <li v-if="completionSummary.total_pause_time"><strong>Tempo in pausa:</strong> {{ completionSummary.total_pause_time }}</li>
+                                                <li v-if="completionSummary.effective_task_time !== undefined"><strong>Tempo effettivo:</strong> {{ formatEffective(completionSummary.effective_task_time) }}</li>
+                                                <li v-if="completionSummary.effective_time_message">{{ completionSummary.effective_time_message }}</li>
+                                            </ul>
+                                        </div>
+                                    </section>
+
+                        <!-- Description -->
+                        <section class="mt-4">
+                            <h2 class="h5 mb-2">Descrizione</h2>
+                            <p class="mb-0 text-body">{{ task.description || 'Nessuna descrizione fornita.' }}</p>
+                        </section>
+
+                        <!-- Moments -->
+                        <section class="mt-4">
+                            <div class="d-flex justify-content-between align-items-center">
+                                <h2 class="h5 mb-0">Momenti</h2>
+                                <RouterLink class="btn btn-sm btn-outline-primary" :to="{ name: 'moments.create', params: { id: task.id } }">+ Aggiungi</RouterLink>
+                            </div>
+                                            <div v-if="moment_card_data.length" class="row row-cols-1 row-cols-md-2 row-cols-lg-3 g-3 mt-1">
+                                                <div v-for="mc in moment_card_data" :key="mc.id" class="col">
+                                                    <MomentCard
+                                                        :id="mc.id"
+                                                        :task_id="mc.task_id"
+                                                        :moments_type_id="mc.moments_type_id"
+                                                        :emotion_id="mc.emotion_id"
+                                                        :name="mc.name"
+                                                        :message="mc.message"
+                                                    />
+                                                </div>
+                                            </div>
+                            <p v-else class="text-muted mt-2">Nessun momento registrato.</p>
+                        </section>
                     </div>
                 </div>
-                <div v-else>
-                    <div class="alert alert-warning text-center mt-3 pastel-alert" role="alert">
-                        Caricamento task in corso...
-                    </div>
-                </div>
-                <div v-if="is_task_completed" class="alert alert-success mt-4 text-center pastel-alert-success">
-                    <p>🎉 Complimenti! Hai completato la task con successo.</p>
-                    <p v-for="(data, idx) in completed_task_data" :key="idx">{{ data }}</p>
-                </div>
+
+                <div v-else class="alert alert-info" role="status">Task non trovata.</div>
             </div>
         </div>
     </div>
+  
 </template>
 
 <script>
 import MomentCard from '@/components/MomentCard.vue';
 import { store } from '@/store';
 import api from '@/api/axios';
+
 export default {
-    components: {
-        MomentCard
-    },
+    components: { MomentCard },
     data() {
         return {
             store,
-            task: [],
+            task: null,
             moments: [],
-            completed_task_data: [],
-            is_task_completed: false,
-            moment_card_data: []
-        }
+            moment_card_data: [],
+            isLoading: true,
+            isUpdating: false,
+    error: '',
+    completionSummary: null,
+        };
     },
-
-    methods: {
-        getTaskData() {
-            const task_id = this.$route.params.id;
-            api.get(`tasks/${task_id}/show`)
-                .then((response) => {
-                    this.task = response.data.task;
-                    this.moments = this.task.moments;
-                });
+    computed: {
+        showStart() {
+            // Show start if not running
+            return this.task && this.task.status_id !== 2;
         },
-
-        modifyTaskStatus(status_id, task_id) {
-            api.patch(`tasks/${task_id}/status`, {
-                'status_id': status_id,
-                'task_id': task_id
-            })
-                .then((response) => {
-                    this.getTaskData(); // Ricarica la task aggiornata
-                    if (this.task.status_id === 3) {
-                        this.is_task_completed = true;
-                        this.completed_task_data = response.data;
+        showStop() {
+            return this.task && this.task.status_id === 2;
+        },
+        startLabel() {
+            return this.task && this.task.status_id === 4 ? 'Riavvia' : 'Avvia';
+        }
+    },
+    methods: {
+            async fetchTask() {
+            this.isLoading = true;
+            this.error = '';
+            const id = this.$route.params.id;
+            try {
+                const res = await api.get(`tasks/${id}/show`);
+                this.task = res.data?.task || null;
+                this.moments = this.task?.moments || [];
+            } catch (e) {
+                    if (e?.response?.status === 404) {
+                        this.error = 'Task non disponibile o non appartenente all\'utente.';
+                    } else {
+                        this.error = 'Errore nel caricamento della task.';
                     }
-                })
-                .catch((error) => {
-                    // Puoi gestire l'errore anche visualizzando un alert o un messaggio utente
-                    // console.error('Errore nell\'aggiornamento dello stato della task:', error);
-                });
+                this.task = null;
+            } finally {
+                this.isLoading = false;
+            }
+        },
+            async updateStatus(next) {
+            if (!this.task) return;
+            this.isUpdating = true;
+            try {
+                    const { data } = await api.patch(`tasks/${this.task.id}/status`, { status_id: next });
+                    this.store.addToast(data?.message || 'Stato della task aggiornato.', 'success');
+                    // Capture completion summaries when present
+                    if (next === 3) {
+                        this.completionSummary = {
+                            message: data?.message,
+                            total_task_time: data?.total_task_time,
+                            total_pause_time: data?.total_pause_time,
+                            effective_task_time: data?.effective_task_time,
+                            effective_time_message: data?.effective_time_message,
+                        };
+                    } else {
+                        this.completionSummary = null;
+                    }
+                    await this.fetchTask();
+            } catch (e) {
+                    if (e?.response?.status === 404) {
+                        this.error = 'Task non disponibile o non appartenente all\'utente.';
+                        this.store.addToast('Task non disponibile o non appartenente.', 'warning');
+                    } else if (e?.response?.status === 422) {
+                        this.store.addToast('Dati non validi per l\'aggiornamento.', 'error');
+                    } else {
+                        this.store.addToast('Errore nell\'aggiornamento dello stato.', 'error');
+                    }
+            } finally {
+                this.isUpdating = false;
+            }
+        },
+        startTask() { this.updateStatus(2); },
+        stopTask() { this.updateStatus(4); },
+        completeTask() { this.updateStatus(3); },
+        formatEstimated(totalMinutes) {
+            const h = Math.floor(totalMinutes / 60);
+            const m = totalMinutes % 60;
+            if (h && m) return `${h}h ${m}m`;
+            if (h) return `${h}h`;
+            return `${m}m`;
+        },
+        formatDate(val) {
+            try {
+                const d = new Date(val);
+                if (isNaN(d.getTime())) return String(val);
+                return d.toLocaleString();
+            } catch {
+                return String(val);
+            }
+            },
+            formatEffective(val) {
+                // If string already formatted, return as-is; if number (minutes), format nicely
+                if (typeof val === 'string') return val;
+                const mins = Number(val) || 0;
+                return this.formatEstimated(mins);
         }
     },
-
     watch: {
-        moments() {
-            this.moment_card_data = [];
-            this.moments.forEach(moment => {
-                this.moment_card_data.push({
-                    'id': moment.id, 
-                    'task_id': moment.task_id, 
-                    'moments_type_id': moment.moments_type_id, 
-                    'emotion_id': moment.emotion_id, 
-                    'name': moment.name, 
-                    'message': moment.message
-                });
-            });
+        moments: {
+            handler() {
+                this.moment_card_data = (this.moments || []).map(moment => ({
+                    id: moment.id,
+                    task_id: moment.task_id,
+                    moments_type_id: moment.moments_type_id,
+                    emotion_id: moment.emotion_id,
+                    name: moment.name,
+                    message: moment.message,
+                }));
+            },
+            immediate: true
+        },
+        '$route.params.id': {
+            handler() { this.fetchTask(); },
         }
     },
-
-    mounted() {
-        this.getTaskData();
-    }
+    mounted() { this.fetchTask(); }
 };
 </script>
 
 <style scoped lang="scss">
 @use "../assets/partials/_variables.scss" as *;
-.task-detail-card {
-    border-radius: 15px;
-    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
-    background-color: $pastel-pink;
-    transition: transform 0.3s ease;
-    font-family: 'Poppins', sans-serif;
-    &:hover {
-        transform: translateY(-5px);
-        box-shadow: 0 10px 20px rgba(0, 0, 0, 0.15);
-    }
+
+.task-card {
+    background: $surface-color;
+    border-radius: var(--radius-lg);
+    box-shadow: var(--shadow-1);
+    border-left: 4px solid var(--accent);
 }
-.pastel-btn {
-    border-radius: $btn-border-radius;
-    font-weight: bold;
-    letter-spacing: 0.5px;
-    padding: $btn-padding-y $btn-padding-x;
-    background-color: $btn-primary-bg;
-    color: $btn-primary-color;
-    border: none;
-    transition: background-color $transition-duration $transition-timing-function;
-    &:hover {
-        background-color: $pastel-blue-dark;
-    }
-}
-.pastel-footer {
-    background-color: $pastel-blue;
-    border-radius: 0 0 15px 15px;
-}
-.pastel-alert {
-    background-color: $secondary-color;
+.back-btn { padding: .25rem .5rem; border-radius: 999px; }
+.task-header .task-title {
     color: $text-color;
-    border: 1px solid $primary-color;
 }
-.pastel-alert-success {
-    background-color: $pastel-green;
-    color: $white;
-    border-radius: $btn-border-radius;
-    font-weight: bold;
+.chip {
+    display: inline-flex;
+    align-items: center;
+    gap: .4rem;
+    padding: .25rem .5rem;
+    border-radius: 999px;
+    background: rgba(0,0,0,0.04);
+    color: $text-color;
+    border: 1px solid rgba(0,0,0,0.06);
+    font-size: .9rem;
 }
-.list-group-item strong {
-  color: $accent-color;
-  font-weight: bold;
-  margin-right: 0.5rem;
+.chip-dot { width: .65rem; height: .65rem; border-radius: 50%; display: inline-block; }
+
+.task-meta .meta-item {
+    background: $surface-color;
+    border: 1px solid rgba(0,0,0,0.06);
+    border-radius: var(--radius-md);
+    padding: .75rem .9rem;
 }
-.badge, .rounded-pill {
-  display: inline-block;
-  min-width: 60px;
-  padding: 0.35em 0.7em;
-  font-size: 0.95em;
-  font-weight: 600;
-  border-radius: 1em;
-  background-color: $pastel-purple;
-  color: $white;
-  margin-left: 0.5em;
-  margin-right: 0.5em;
-  vertical-align: middle;
-}
-.badge-priority-high {
-  background-color: $btn-danger-bg;
-  color: $white;
-}
-.badge-priority-medium {
-  background-color: $btn-warning-bg;
-  color: $black;
-}
-.badge-priority-low {
-  background-color: $btn-info-bg;
-  color: $white;
-}
-.badge-status-completed {
-  background-color: $btn-success-bg;
-  color: $white;
-}
-.badge-status-open {
-  background-color: $btn-primary-bg;
-  color: $white;
-}
+.task-meta .label { color: $color-muted; font-size: .85rem; }
+.task-meta .value { color: $text-color; font-weight: 600; }
+
+section h2 { color: $text-color; }
+section p { color: $text-color; }
 </style>

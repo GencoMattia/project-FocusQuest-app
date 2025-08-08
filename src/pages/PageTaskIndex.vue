@@ -100,23 +100,19 @@ export default {
         .btn-primary, .pastel-btn {
             background-color: $btn-primary-bg;
             color: $btn-primary-color;
-            &:hover { background-color: $pastel-blue-dark; }
+            &:hover { background-color: $primary-dark; }
         }
     }
     .pastel-table { background-color: var(--color-surface); }
     .table {
-        thead { background-color: $primary-color; color: $white; }
-        tbody tr:hover { background-color: lighten($primary-color, 40%); }
+        thead { background-color: $primary-color; color: #fff; }
+        tbody tr:hover { background-color: color-mix(in oklab, var(--color-primary), #fff 80%); }
         .btn-outline-primary, .pastel-btn-outline {
             color: $primary-color; border-color: $primary-color;
-            &:hover { background-color: $primary-color; color: $white; }
+            &:hover { background-color: $primary-color; color: #fff; }
         }
     }
-    .pastel-alert {
-        background-color: $secondary-color;
-        color: $text-color;
-        border: 1px solid lighten($primary-color, 20%);
-    }
+    .pastel-alert { background-color: $secondary-color; color: $text-color; border: 1px solid color-mix(in oklab, var(--color-primary), #fff 70%); }
 }
 .btn-action {
   background-color: var(--color-accent);

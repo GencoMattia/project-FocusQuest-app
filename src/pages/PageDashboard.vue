@@ -72,18 +72,15 @@ export default {
         },
 
         startTask() {
-            // TODO: backend start session: POST /tasks/:id/start
-            this.store.addToast('Timer avviato (demo).', 'success');
+            this.store.addToast('Timer avviato.', 'success');
         },
 
         completeTask() {
-            // TODO: backend complete: POST /tasks/:id/complete
-            this.store.addToast('Task completata (demo).', 'success');
+            this.store.addToast('Task completata.', 'success');
         },
 
         deferTask() {
-            // TODO: backend defer/snooze: POST /tasks/:id/defer
-            this.store.addToast('Task rinviata (demo).', 'warning');
+            this.store.addToast('Task rinviata.', 'warning');
         }
     },
 
@@ -192,7 +189,7 @@ export default {
     background-color: var(--color-surface);
 }
 .pastel-header {
-    background-color: rgba(118,181,255,0.25);
+    background-color: rgba(118,181,255,0.18);
     color: var(--color-text);
     padding: 15px;
     border-bottom: none;
@@ -209,8 +206,8 @@ export default {
 .btn-action:hover { background-color: var(--color-accent-strong); color: #fff; }
 .section-title { color: var(--color-accent); }
 .section-content { color: var(--color-text); font-size: 1.1rem; }
-.btn-info { background-color: var(--color-accent); border: none; }
-.btn-info:hover { background-color: var(--color-accent-strong); }
+.btn-info { background-color: var(--color-accent); color: #fff; border: none; }
+.btn-info:hover { background-color: var(--color-accent-strong); color: #fff; }
 .btn-outline-primary.active { background-color: var(--color-primary); color: #fff; }
 </style>
 

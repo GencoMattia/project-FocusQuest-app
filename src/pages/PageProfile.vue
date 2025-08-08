@@ -55,7 +55,7 @@ export default {
     }
 
     .profile-details {
-        background: linear-gradient(135deg, $primary-color 10%, $pastel-accent 100%);
+        background: linear-gradient(135deg, $primary-color 10%, $accent-color 100%);
         color: $text-color;
         border: 1px solid $primary-color;
         border-radius: $btn-border-radius;

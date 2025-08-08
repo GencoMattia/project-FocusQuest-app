@@ -133,7 +133,7 @@ export default {
     display: flex;
     justify-content: center;
     align-items: center;
-    background: linear-gradient(135deg, $primary-color 30%, $pastel-accent 100%);
+    background: linear-gradient(135deg, $primary-color 30%, $accent-color 100%);
     font-family: 'Poppins', sans-serif;
 }
 
@@ -174,7 +174,7 @@ export default {
     border-radius: 8px;
     box-shadow: 0 2px 8px rgba(163, 216, 244, 0.08);
     transition: border-color 0.3s $transition-timing-function, box-shadow 0.3s $transition-timing-function;
-    background-color: $white;
+    background-color: $surface-color;
 }
 
 .form-control:focus {
@@ -195,9 +195,7 @@ export default {
     margin-top: 1rem;
     font-weight: bold;
     letter-spacing: 0.5px;
-    &:hover {
-        background-color: $pastel-blue-dark;
-    }
+    &:hover { background-color: $primary-dark; }
 }
 
 .login-footer {

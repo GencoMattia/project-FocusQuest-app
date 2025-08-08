@@ -1,6 +1,29 @@
 @use "./partials/_variables.scss" as *;
 
+html, body {
+    min-height: 100%;
+}
+
 body {
-    background-color: $background-color;
+    background: linear-gradient(135deg, var(--gradient-start) 30%, var(--gradient-end) 100%);
     color: $text-color;
+    font-family: $font-family-base;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+}
+
+// Cards and surfaces default
+.card, .pastel-card {
+    background-color: $surface-color;
+    color: $text-color;
+}
+
+// Improve default form controls contrast
+input.form-control, textarea.form-control, select.form-select, .styled-input, .styled-select {
+    background-color: var(--color-surface);
+    color: $text-color;
+    border-color: rgba(0,0,0,0.08);
+}
+input.form-control::placeholder, textarea.form-control::placeholder {
+    color: $color-muted;
 }

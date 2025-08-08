@@ -296,7 +296,7 @@ export default {
     max-width: 600px;
     margin: 2rem auto;
     padding: 2.5rem 2rem;
-    background-color: $secondary-color;
+    background-color: $surface-color;
     border-radius: 18px;
     box-shadow: 0 4px 18px rgba(0, 0, 0, 0.10);
     font-family: 'Poppins', sans-serif;
@@ -305,29 +305,31 @@ export default {
 .styled-input,
 .styled-select {
     padding: 0.85rem;
-    border: 1px solid $primary-color;
+    border: 1px solid rgba(0,0,0,0.08);
     border-radius: 8px;
     width: 100%;
     font-size: 1rem;
     margin-bottom: 1.2rem;
     transition: border-color 0.3s $transition-timing-function;
-    background-color: $white;
+    background-color: $surface-color;
+    color: $text-color;
     &:focus {
-        border-color: $accent-color;
+        border-color: $primary-color;
         outline: none;
-        box-shadow: 0 0 8px $accent-color;
+        box-shadow: var(--focus-ring);
     }
 }
 textarea {
     min-height: 120px;
     resize: vertical;
-    border: 1px solid $primary-color;
+    border: 1px solid rgba(0,0,0,0.08);
     padding: 0.85rem;
     border-radius: 8px;
-    background-color: $white;
+    background-color: $surface-color;
+    color: $text-color;
 }
 .dropdown, .suggestions-list {
-    background-color: $white;
+    background-color: $surface-color;
     box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
     border-radius: 8px;
     position: absolute;
@@ -345,15 +347,15 @@ textarea {
     transition: background-color 0.2s ease;
     border-radius: 8px;
     &:hover {
-        background-color: $pastel-accent;
-        color: $white;
+        background-color: rgba(118,181,255,0.15);
+        color: $text-color;
     }
 }
 .button-like {
-    background-color: $pastel-blue;
+    background-color: $primary-color;
     margin: 5px;
     &:hover {
-        background-color: $pastel-accent;
+        background-color: $primary-dark;
     }
 }
 .new-task-button {
@@ -361,7 +363,7 @@ textarea {
     text-align: center;
     padding: 12px;
     background-color: $primary-color;
-    color: $white;
+    color: #fff;
     border-radius: 8px;
     &:hover {
         background-color: $primary-dark;
@@ -377,32 +379,32 @@ textarea {
     background-color: $btn-primary-bg;
     color: $btn-primary-color;
     &:hover {
-        background-color: $pastel-blue-dark;
+        background-color: $primary-dark;
     }
 }
 .btn-tertiary, .pastel-btn-tertiary {
-    background-color: $secondary-color;
+    background-color: transparent;
     color: $primary-color;
     border: 1px solid $primary-color;
     &:hover {
         background-color: $primary-color;
-        color: $white;
+        color: #fff;
     }
 }
 .submit-button {
     background-color: $btn-primary-bg;
     color: $btn-primary-color;
     &:hover {
-        background-color: $pastel-blue-dark;
+        background-color: $primary-dark;
     }
 }
 .reset-button {
-    background-color: $secondary-color;
+    background-color: transparent;
     color: $primary-color;
     border: 1px solid $primary-color;
     &:hover {
         background-color: $primary-color;
-        color: $white;
+        color: #fff;
     }
 }
 .error-message {

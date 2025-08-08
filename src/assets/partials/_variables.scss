@@ -1,47 +1,44 @@
-// PALETTE PASTELLO
-$white: #fff;
-$black: #222;
-$pastel-blue: #a3d8f4;
-$pastel-blue-dark: #6eb6e6;
-$pastel-pink: #ffd5ec;
-$pastel-pink-dark: #ffb3d1;
-$pastel-purple: #d1c4e9;
-$pastel-purple-dark: #b39ddb;
-$pastel-green: #b2f2bb;
-$pastel-green-dark: #7be495;
-$pastel-yellow: #fff3bf;
-$pastel-yellow-dark: #ffe066;
-$pastel-orange: #ffe5b4;
-$pastel-orange-dark: #ffd59a;
-$pastel-accent: #9af3ff;
+// THEME BRIDGE (SCSS wrappers around CSS variables)
+$color-bg: var(--color-bg);
+$color-surface: var(--color-surface);
+$color-text: var(--color-text);
+$color-muted: var(--color-muted);
+$color-primary: var(--color-primary);
+$color-primary-strong: var(--color-primary-strong);
+$color-accent: var(--color-accent);
+$color-accent-strong: var(--color-accent-strong);
+$color-success: var(--color-success);
+$color-warning: var(--color-warning);
+$color-danger: var(--color-danger);
 
-// COLORI PRINCIPALI UI
-$background-color: $pastel-blue;
-$primary-color: $pastel-blue;
-$primary-dark: $pastel-blue-dark;
-$secondary-color: $pastel-pink;
-$secondary-dark: $pastel-pink-dark;
-$accent-color: $pastel-purple;
-$accent-dark: $pastel-purple-dark;
-$text-color: $black;
-$light-text: $white;
-$danger-color: #e57373;
+// SEMANTIC TOKENS
+$background-color: $color-bg;
+$surface-color: $color-surface;
+$primary-color: $color-primary;
+$primary-dark: $color-primary-strong;
+$secondary-color: $color-surface; // use surface for cards/secondary blocks
+$secondary-dark: $color-primary-strong;
+$accent-color: $color-accent;
+$accent-dark: $color-accent-strong;
+$text-color: $color-text;
+$light-text: #fff;
+$danger-color: $color-danger;
 
-// COLORI BOTTONI
-$btn-primary-bg: $pastel-blue;         // azzurro: azione principale neutra
-$btn-primary-color: $white;
-$btn-info-bg: $pastel-purple;          // lilla: info/secondario
-$btn-info-color: $white;
-$btn-success-bg: $pastel-green;        // verde: successo/conferma
-$btn-success-color: $white;
-$btn-warning-bg: $pastel-yellow;       // giallo: attenzione
-$btn-warning-color: $black;
-$btn-danger-bg: $pastel-pink;          // rosa: cancellazione/interruzione
-$btn-danger-color: $white;
+// BUTTON TOKENS
+$btn-primary-bg: $color-primary;         // main action
+$btn-primary-color: #fff;
+$btn-info-bg: $color-accent;             // secondary/accent
+$btn-info-color: #fff;
+$btn-success-bg: $color-success;         // success
+$btn-success-color: #fff;
+$btn-warning-bg: $color-warning;         // warning
+$btn-warning-color: #111;
+$btn-danger-bg: $color-danger;           // danger
+$btn-danger-color: #fff;
 $btn-outline-bg: transparent;
-$btn-outline-color: $pastel-blue;
+$btn-outline-color: $color-primary;
 
-// STILI BOTTONI
+// SIZING & EFFECTS
 $btn-padding-y: 10px;
 $btn-padding-x: 20px;
 $btn-border-radius: 8px;
@@ -50,69 +47,42 @@ $transition-duration: 0.3s;
 $transition-timing-function: ease;
 $box-shadow: 0 0.125rem 0.25rem rgba(0, 0, 0, 0.075);
 
-// FONT
+// TYPOGRAPHY
 $font-family-base: 'Poppins', 'Helvetica Neue', Helvetica, Arial, sans-serif;
 $font-size-base: 1rem;
 
-// TEMPLATE BOTTONI
+// GLOBAL BUTTON ENHANCEMENTS (overrides bootstrap palette)
 .btn {
   font-family: $font-family-base;
   font-size: $btn-font-size;
-  font-weight: bold;
+  font-weight: 600;
   border-radius: $btn-border-radius;
   padding: $btn-padding-y $btn-padding-x;
-  border: none;
-  box-shadow: $box-shadow;
-  letter-spacing: 0.5px;
-  transition: background-color $transition-duration $transition-timing-function, color $transition-duration $transition-timing-function;
-  cursor: pointer;
+  letter-spacing: 0.3px;
+  transition: background-color $transition-duration $transition-timing-function,
+              color $transition-duration $transition-timing-function,
+              box-shadow $transition-duration $transition-timing-function;
   &.btn-primary {
     background-color: $btn-primary-bg;
     color: $btn-primary-color;
-    &:hover {
-      background-color: $primary-dark;
-      color: $white;
-    }
+    border: none;
+    &:hover { background-color: $primary-dark; color: #fff; }
   }
   &.btn-info {
-    background-color: $btn-info-bg;
-    color: $btn-info-color;
-    &:hover {
-      background-color: $accent-dark;
-      color: $white;
-    }
+    background-color: $btn-info-bg; color: $btn-info-color; border: none;
+    &:hover { background-color: $accent-dark; color: #fff; }
   }
   &.btn-success {
-    background-color: $btn-success-bg;
-    color: $btn-success-color;
-    &:hover {
-      background-color: $pastel-green-dark;
-      color: $white;
-    }
+    background-color: $btn-success-bg; color: $btn-success-color; border: none;
   }
   &.btn-warning {
-    background-color: $btn-warning-bg;
-    color: $btn-warning-color;
-    &:hover {
-      background-color: $pastel-yellow-dark;
-      color: $black;
-    }
+    background-color: $btn-warning-bg; color: $btn-warning-color; border: none;
   }
   &.btn-danger {
-    background-color: $btn-danger-bg;
-    color: $btn-danger-color;
-    &:hover {
-      background-color: $pastel-pink-dark;
-      color: $white;
-    }
+    background-color: $btn-danger-bg; color: $btn-danger-color; border: none;
   }
-  &.btn-outline {
-    background-color: $btn-outline-bg;
-    color: $btn-outline-color;
-    border: 2px solid $btn-outline-color;
-    &:hover {
-      background-color: $btn-outline-color;
-      color: $white;
-    }
+  &.btn-outline-primary {
+    background-color: $btn-outline-bg; color: $btn-outline-color; border: 2px solid $btn-outline-color;
+    &:hover { background-color: $btn-outline-color; color: #fff; }
   }
 }

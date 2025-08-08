@@ -36,22 +36,21 @@ export default {
     },
     methods: {
         getMomentData() {
-            api.get('moments/get-card-data', {
-                params: {
-                    emotion_id: this.emotion_id,
-                    moments_type_id: this.moments_type_id,
-                    task_id: this.task_id
-                }
-            })
-            .then(response => {
-                this.emotion = response.data.moment_emotion || {};
-                this.moments_type = response.data.moment_moments_type || {};
-            })
-            .catch(error => {
-                this.emotion = {};
-                this.moments_type = {};
-                console.error(error);
-            });
+                        // Use moments/form-data; optionally pass task_id; filter locally by ids
+                        const params = { task_id: this.task_id };
+                        api.get('moments/form-data', { params })
+                            .then(response => {
+                                const emotions = response.data?.data?.emotions || [];
+                                const types = response.data?.data?.moment_types || [];
+                                this.emotion = emotions.find(e => e.id === this.emotion_id) || {};
+                                this.moments_type = types.find(t => t.id === this.moments_type_id) || {};
+                            })
+                            .catch(error => {
+                                // 404 ownership => treat as unavailable
+                                this.emotion = {};
+                                this.moments_type = {};
+                                // optional: console.warn('Moments form-data unavailable or not owned');
+                            });
         }
     },
     mounted() {
@@ -61,111 +60,46 @@ export default {
 </script>
 
 <template>
-    <div class="col-12 col-md-6 col-lg-4 mb-4">
-        <div class="moment-card pastel-card shadow">
-            <div class="card-header pastel-header">
-                <h2 class="moment-title">{{ name }}</h2>
-                <p class="moment-emotion">Emozione: <span class="badge" :style="{backgroundColor: emotion.color || '#a3d8f4'}">{{ emotion.name }}</span></p>
-                <p class="moment-type">Tipo: <span class="badge" :style="{backgroundColor: moments_type.color || '#ffd5cd'}">{{ moments_type.name }}</span></p>
-            </div>
-            <div class="card-body">
-                <blockquote class="blockquote mb-0 moment-message">
-                    <p>{{ message }}</p>
-                </blockquote>
-            </div>
+  <article class="moment-card">
+    <header class="moment-header">
+      <h3 class="moment-title">{{ name }}</h3>
+      <div class="meta">
+        <div class="meta-row">
+          <span class="label">Emozione:</span>
+          <span class="chip" :style="{ '--chip-bg': emotion.color || 'var(--color-primary)' }">{{ emotion.name }}</span>
         </div>
-    </div>
+        <div class="meta-row">
+          <span class="label">Tipo:</span>
+          <span class="chip" :style="{ '--chip-bg': moments_type.color || 'var(--color-accent)' }">{{ moments_type.name }}</span>
+        </div>
+      </div>
+    </header>
+    <div v-if="message" class="moment-message">{{ message }}</div>
+  </article>
 </template>
 
 <style scoped lang="scss">
 @use "../assets/partials/_variables.scss" as *;
 
-.card, .dashboard-card, .moment-card {
-  background: $pastel-pink;
-  border-radius: 18px;
-  box-shadow: $box-shadow;
-  padding: 2rem 1.5rem;
-  margin-bottom: 2rem;
+.moment-card {
+  background: color-mix(in oklab, var(--color-surface), var(--color-primary) 6%);
+  border: 1px solid color-mix(in oklab, var(--color-primary), #000 5%);
+  border-radius: var(--radius-lg);
+  box-shadow: var(--shadow-1);
+  padding: 1rem;
   color: $text-color;
   font-family: $font-family-base;
-  max-width: 700px;
-  margin-left: auto;
-  margin-right: auto;
+  height: 100%;
 }
+.moment-header { margin-bottom: .5rem; }
+.moment-title { color: $primary-color; font-weight: 700; font-size: 1.05rem; margin: 0 0 .25rem; }
+.meta { display: grid; gap: .35rem; }
+.meta-row { display: flex; align-items: center; gap: .5rem; }
+.label { color: $color-muted; font-size: .9rem; }
+.chip {
+  display: inline-flex; align-items: center; gap: .4rem; padding: .15rem .5rem; border-radius: 999px;
+  background: var(--chip-bg); color: #fff; font-weight: 600; font-size: .85rem;
+}
+.moment-message { color: $text-color; font-size: 1rem; margin-top: .5rem; white-space: pre-line; }
 
-.card-header, .dashboard-card-header {
-  background: $pastel-blue;
-  border-radius: 12px 12px 0 0;
-  padding: 1rem 1.5rem;
-  font-size: 1.3rem;
-  font-weight: bold;
-  color: $accent-color;
-  margin-bottom: 1rem;
-}
-.moment-title {
-  color: $accent-color;
-  font-weight: bold;
-  font-size: 1.2rem;
-}
-.moment-emotion, .moment-type {
-  color: $text-color;
-  font-size: 1rem;
-  font-weight: 500;
-  margin-bottom: 0.2rem;
-}
-.moment-emotion .badge, .moment-type .badge {
-  display: inline-block;
-  min-width: 60px;
-  padding: 0.35em 0.7em;
-  font-size: 0.95em;
-  font-weight: 600;
-  border-radius: 1em;
-  background-color: $pastel-purple;
-  color: $white;
-  margin-left: 0.5em;
-  margin-right: 0.5em;
-  vertical-align: middle;
-}
-.moment-message {
-  color: $text-color;
-  font-size: 1.1rem;
-  margin-top: 1rem;
-}
-
-.card-title, .dashboard-card-title {
-  font-size: 2rem;
-  font-weight: bold;
-  color: $primary-color;
-  margin-bottom: 1rem;
-}
-
-.card-section, .dashboard-card-section {
-  margin-bottom: 1.2rem;
-  padding: 1rem;
-  background: $white;
-  border-radius: 10px;
-  box-shadow: $box-shadow;
-}
-
-.card-label, .dashboard-card-label {
-  font-weight: bold;
-  color: $accent-color;
-  margin-right: 0.5rem;
-}
-
-.card-value, .dashboard-card-value {
-  color: $text-color;
-  font-size: 1.1rem;
-}
-
-.card-actions, .dashboard-card-actions {
-  display: flex;
-  gap: 1rem;
-  margin-top: 1.5rem;
-  justify-content: flex-end;
-}
-
-.btn {
-  // ...existing button styles from _variables.scss...
-}
 </style>

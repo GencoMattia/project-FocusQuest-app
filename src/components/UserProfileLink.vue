@@ -37,12 +37,12 @@ export default {
     border-radius: $btn-border-radius;
     font-size: $btn-font-size;
     transition: background-color $transition-duration $transition-timing-function, transform 0.2s;
-    background-color: $btn-primary-bg;
-    color: $btn-primary-color;
+    background-color: $btn-info-bg;
+    color: #fff;
 
     &:hover {
-        background-color: $pastel-blue-dark;
-        color: $white;
+        background-color: $accent-dark;
+        color: #fff;
         transform: scale(1.05);
     }
 
