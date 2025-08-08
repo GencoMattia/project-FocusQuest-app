@@ -1,0 +1,22 @@
+<header class="bg-white/90 backdrop-blur border-b border-slate-200">
+  <div class="container mx-auto max-w-6xl px-4 h-14 flex items-center justify-between">
+    <a routerLink="/" class="flex items-center gap-2 font-semibold">
+      <span class="material-icons text-blue-600">task_alt</span>
+      <span>FocusQuest</span>
+    </a>
+
+    <nav class="hidden md:flex items-center gap-4 text-sm">
+      <a routerLink="/" routerLinkActive="text-blue-600" class="hover:text-blue-600 transition">Home</a>
+  <a routerLink="/dashboard" routerLinkActive="text-blue-600" class="hover:text-blue-600 transition flex items-center gap-1"><mat-icon>dashboard</mat-icon> Dashboard</a>
+      <a routerLink="/tasks" routerLinkActive="text-blue-600" class="hover:text-blue-600 transition flex items-center gap-1"><mat-icon>checklist</mat-icon> Tasks</a>
+      <a routerLink="/profile" routerLinkActive="text-blue-600" class="hover:text-blue-600 transition flex items-center gap-1" *ngIf="isAuth()"><mat-icon>account_circle</mat-icon> Profilo</a>
+    </nav>
+
+    <ng-container *ngIf="!isAuth(); else logged">
+      <a routerLink="/login" class="text-sm hover:text-blue-600 transition">Login</a>
+    </ng-container>
+    <ng-template #logged>
+      <button (click)="logout()" class="text-sm hover:text-blue-600 transition">Logout</button>
+    </ng-template>
+  </div>
+</header>
