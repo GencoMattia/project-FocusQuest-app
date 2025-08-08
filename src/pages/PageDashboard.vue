@@ -21,6 +21,8 @@ export default {
             },
 
             isAscending: true,
+            userLoading: true,
+            taskLoading: true,
         };
     },
 
@@ -38,12 +40,13 @@ export default {
                 console.log(this.store.loggedUser)
             } catch (error) {
                 console.error("Errore nel recupero dei dati dell'utente:", error);
+            } finally {
+                this.userLoading = false;
             }
         },
 
         getPriorityTask() {
-            console.log("Order direction:", this.isAscending ? "Ascending" : "Descending");
-
+            this.taskLoading = true;
             api.get('tasks/top-priority', {
                 params: {
                     estimated_time_order: this.isAscending ? "asc" : "desc"
@@ -54,16 +57,34 @@ export default {
                 if (response.data.task) {
                     this.priorityTask = response.data.task;
                 } else {
-                    console.log("Nessuna task trovata");
+                    this.priorityTask = {};
                 }
-            }).catch((error) => {
-                console.error("Errore nel recupera della task con priorità:", error);
-            })
+            }).catch(() => {
+                this.store.addToast('Errore nel recupero della task con priorità.', 'error');
+                this.priorityTask = {};
+            }).finally(() => {
+                this.taskLoading = false;
+            });
         },
 
         toggleOrder() {
             this.getPriorityTask();
         },
+
+        startTask() {
+            // TODO: backend start session: POST /tasks/:id/start
+            this.store.addToast('Timer avviato (demo).', 'success');
+        },
+
+        completeTask() {
+            // TODO: backend complete: POST /tasks/:id/complete
+            this.store.addToast('Task completata (demo).', 'success');
+        },
+
+        deferTask() {
+            // TODO: backend defer/snooze: POST /tasks/:id/defer
+            this.store.addToast('Task rinviata (demo).', 'warning');
+        }
     },
 
     mounted() {
@@ -80,60 +101,77 @@ export default {
 </script>
 
 <template>
-    <div class="container dashboard-page mt-5 pt-5">
+    <div class="container dashboard-page mt-5 pt-4">
         <!-- Welcome Card -->
-        <div class="row justify-content-center mt-4">
+        <div class="row justify-content-center mt-2">
             <div class="col-lg-8">
                 <div class="card shadow-sm pastel-card dashboard-welcome-card">
                     <div class="card-header d-flex justify-content-between align-items-center pastel-header">
-                        <h3 class="card-title mb-0">Benvenuto, {{ store.loggedUser.name }}!</h3>
+                        <h3 class="card-title mb-0">
+                            <span v-if="userLoading" class="fq-skeleton" style="display:inline-block;width:180px;height:24px;"></span>
+                            <span v-else>Benvenuto, {{ store.loggedUser.name }}!</span>
+                        </h3>
                         <i class="bi bi-person-circle fs-2"></i>
                     </div>
                     <div class="card-body">
-                        <p class="lead">Questa è la tua dashboard, {{ store.loggedUser.name }} {{ store.loggedUser.surname }}.</p>
-                        <p><strong>Email:</strong> {{ store.loggedUser.email }}</p>
-                        <p><strong>User ID:</strong> {{ store.loggedUser.id }}</p>
-                        <div class="text-center mt-4">
-                            <UserProfileLink :user="user" />
+                        <div v-if="userLoading">
+                            <div class="fq-skeleton mb-2" style="height:16px;width:60%;"></div>
+                            <div class="fq-skeleton mb-2" style="height:16px;width:40%;"></div>
+                        </div>
+                        <div v-else>
+                            <p class="lead">Questa è la tua dashboard, {{ store.loggedUser.name }} {{ store.loggedUser.surname }}.</p>
+                            <p><strong>Email:</strong> {{ store.loggedUser.email }}</p>
+                            <p><strong>User ID:</strong> {{ store.loggedUser.id }}</p>
+                            <div class="text-center mt-4">
+                                <UserProfileLink :user="user" />
+                            </div>
                         </div>
                     </div>
                 </div>
             </div>
         </div>
-        <!-- Task Cards -->
-        <div class="row justify-content-center mt-5">
-            <!-- Task più urgente -->
-            <div class="col-lg-5 mb-4">
+
+        <!-- Task più urgente -->
+        <div class="row justify-content-center mt-4">
+            <div class="col-lg-8">
                 <div class="card task-card shadow-sm pastel-card dashboard-task-card">
-                    <div class="card-body text-center">
-                        <h5 class="card-title task-title">🔥 Più Urgente</h5>
-                        <p class="card-text">Questa è la tua task più urgente</p>
-                        <div class="form-check form-switch d-flex justify-content-evenly mt-3">
-                            <label class="form-check-label" for="taskOrderSwitch">
-                                Quanto tempo hai? {{ orderLabel }}
-                            </label>
-                            <input class="form-check-input pastel-switch" type="checkbox" role="switch" id="taskOrderSwitch"
-                                v-model="isAscending" @change="toggleOrder">
+                    <div class="card-body">
+                        <div class="d-flex justify-content-between align-items-center">
+                            <div>
+                                <h5 class="card-title task-title">🔥 Più Urgente</h5>
+                                <p class="card-text">La task consigliata in base al tempo a disposizione.</p>
+                            </div>
+                            <!-- Pill-like selector (keeps same logic) -->
+                            <div class="btn-group" role="group" aria-label="Tempo a disposizione">
+                                <button type="button" class="btn btn-outline-primary" :class="{ active: isAscending }" @click="isAscending=true; toggleOrder()">Poco</button>
+                                <button type="button" class="btn btn-outline-primary" :class="{ active: !isAscending }" @click="isAscending=false; toggleOrder()">Molto</button>
+                            </div>
                         </div>
-                        <div class="task-section mt-3">
-                            <h6 class="section-title fw-bold">Nome</h6>
-                            <p class="section-content">{{ priorityTask.name }}</p>
+
+                        <div v-if="taskLoading" class="mt-3">
+                            <div class="fq-skeleton mb-2" style="height:20px;width:50%;"></div>
+                            <div class="fq-skeleton mb-2" style="height:20px;width:30%;"></div>
+                            <div class="fq-skeleton" style="height:40px;width:100%;"></div>
                         </div>
-                        <div class="task-section">
-                            <h6 class="section-title fw-bold">Tempo stimato</h6>
-                            <p class="section-content">{{ priorityTask.estimated_time }} Minuti</p>
+
+                        <div v-else class="mt-3">
+                            <div class="task-section">
+                                <h6 class="section-title fw-bold">Nome</h6>
+                                <p class="section-content">{{ priorityTask.name || 'Nessuna task trovata' }}</p>
+                            </div>
+                            <div class="task-section">
+                                <h6 class="section-title fw-bold">Tempo stimato</h6>
+                                <p class="section-content">{{ priorityTask.estimated_time }} Minuti</p>
+                            </div>
+
+                            <div class="d-flex flex-wrap gap-2 mt-3" v-if="priorityTask && priorityTask.id">
+                                <router-link :to="{ name: 'tasks.show', params: { id: priorityTask.id } }" class="btn btn-info">Dettagli</router-link>
+                                <button class="btn btn-action" @click="startTask">Avvia</button>
+                                <button class="btn btn-success" @click="completeTask">Completa</button>
+                                <button class="btn btn-outline-secondary" @click="deferTask">Rimanda</button>
+                            </div>
                         </div>
-                        <router-link v-if="priorityTask && priorityTask.id" :to="{ name: 'tasks.show', params: { id: priorityTask.id } }" class="btn btn-info mt-3">Maggiori informazioni</router-link>
-                    </div>
-                </div>
-            </div>
-            <!-- New task -->
-            <div class="col-lg-5 mb-4">
-                <div class="card shadow-sm pastel-card dashboard-task-card">
-                    <div class="card-body text-center">
-                        <h5 class="card-title">➕ Nuova Task</h5>
-                        <p class="card-text">Crea una nuova task da zero.</p>
-                        <router-link :to="{ name: 'tasks.create' }" class="btn btn-primary mt-3">Crea Task</router-link>
+
                     </div>
                 </div>
             </div>
@@ -145,86 +183,34 @@ export default {
 @use "../assets/partials/_variables.scss" as *;
 .dashboard-page {
     font-family: 'Poppins', sans-serif;
-    background: linear-gradient(135deg, $primary-color 30%, $pastel-accent 100%);
     min-height: 100vh;
     padding-bottom: 2rem;
 }
 .dashboard-welcome-card, .dashboard-task-card {
     border-radius: 15px;
     box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
-    background-color: $pastel-pink;
-    transition: transform 0.3s ease;
-    &:hover {
-        transform: translateY(-5px);
-        box-shadow: 0 10px 20px rgba(0, 0, 0, 0.15);
-    }
+    background-color: var(--color-surface);
 }
 .pastel-header {
-    background-color: $pastel-blue;
-    color: $text-color;
+    background-color: rgba(118,181,255,0.25);
+    color: var(--color-text);
     padding: 15px;
     border-bottom: none;
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-}
-.btn-outline-pastel {
-    border-color: $pastel-accent;
-    background-color: $pastel-blue;
-    color: $primary-color !important;
-    padding: 0.5rem 1.5rem;
-    text-transform: uppercase;
-    border-radius: $btn-border-radius;
-    font-weight: bold;
-    letter-spacing: 0.5px;
-    transition: background-color $transition-duration $transition-timing-function, color $transition-duration $transition-timing-function;
-    &:hover {
-        background-color: $pastel-accent;
-        color: $primary-color;
-    }
 }
 .btn-action {
-  background-color: $accent-color;
-  color: $white;
+  background-color: var(--color-accent);
+  color: #fff;
   border: none;
   border-radius: $btn-border-radius;
   font-weight: bold;
   letter-spacing: 0.5px;
   padding: $btn-padding-y $btn-padding-x;
-  transition: background-color $transition-duration $transition-timing-function, color $transition-duration $transition-timing-function;
-  &:hover {
-    background-color: $accent-dark;
-    color: $white;
-  }
 }
-.pastel-switch {
-    background-color: $pastel-blue;
-    &:checked {
-        background-color: $pastel-accent;
-    }
-}
-.section-title {
-  color: $accent-color;
-  font-weight: bold;
-  margin-bottom: 0.2rem;
-}
-.section-content {
-  color: $text-color;
-  font-size: 1.1rem;
-}
-.btn-info, .btn-action {
-  background-color: $accent-color;
-  color: $white;
-  border: none;
-  border-radius: $btn-border-radius;
-  font-weight: bold;
-  letter-spacing: 0.5px;
-  padding: $btn-padding-y $btn-padding-x;
-  transition: background-color $transition-duration $transition-timing-function, color $transition-duration $transition-timing-function;
-  &:hover {
-    background-color: $accent-dark;
-    color: $white;
-  }
-}
+.btn-action:hover { background-color: var(--color-accent-strong); color: #fff; }
+.section-title { color: var(--color-accent); }
+.section-content { color: var(--color-text); font-size: 1.1rem; }
+.btn-info { background-color: var(--color-accent); border: none; }
+.btn-info:hover { background-color: var(--color-accent-strong); }
+.btn-outline-primary.active { background-color: var(--color-primary); color: #fff; }
 </style>
 

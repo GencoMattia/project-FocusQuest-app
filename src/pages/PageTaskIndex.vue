@@ -1,13 +1,17 @@
 <script>
 import api from '@/api/axios';
+import { store } from '@/store';
 export default {
     data() {
         return {
-            tasks: []
+            tasks: [],
+            isLoading: true,
+            store
         };
     },
     methods: {
         getUserTask() {
+            this.isLoading = true;
             api
                 .get('tasks/index')
                 .then(response => {
@@ -16,6 +20,10 @@ export default {
                 .catch(error => {
                     this.tasks = [];
                     console.error(error);
+                    this.store.addToast('Errore durante il caricamento delle task.', 'error');
+                })
+                .finally(() => {
+                    this.isLoading = false;
                 });
         },
         showTask(id) {
@@ -37,7 +45,16 @@ export default {
                 Aggiungi una nuova task
             </router-link>
         </header>
-        <div v-if="tasks.length" class="table-responsive rounded shadow-sm pastel-table">
+
+        <!-- Skeleton Table -->
+        <div v-if="isLoading" class="rounded shadow-sm pastel-table p-3">
+            <div class="fq-skeleton mb-2" style="height:28px;width:100%;"></div>
+            <div class="fq-skeleton mb-2" style="height:52px;width:100%;"></div>
+            <div class="fq-skeleton mb-2" style="height:52px;width:100%;"></div>
+            <div class="fq-skeleton" style="height:52px;width:100%;"></div>
+        </div>
+
+        <div v-else-if="tasks.length" class="table-responsive rounded shadow-sm pastel-table">
             <table class="table table-hover align-middle">
                 <thead class="table-primary text-center">
                     <tr>
@@ -54,15 +71,12 @@ export default {
                     <tr v-for="task in tasks" :key="task.id" class="text-center">
                         <td>{{ task.name }}</td>
                         <td>{{ task.description }}</td>
-                        <td>{{ task.category.name }}</td>
-                        <td>{{ task.priority.name }}</td>
+                        <td>{{ task.category?.name }}</td>
+                        <td>{{ task.priority?.name }}</td>
                         <td>{{ task.estimated_time }} minuti</td>
-                        <td>{{ task.status.name }}</td>
+                        <td>{{ task.status?.name }}</td>
                         <td>
-                            <button
-                                @click="showTask(task.id)"
-                                class="btn btn-action btn-sm"
-                            >
+                            <button @click="showTask(task.id)" class="btn btn-action btn-sm">
                                 Mostra
                             </button>
                         </td>
@@ -70,7 +84,8 @@ export default {
                 </tbody>
             </table>
         </div>
-        <div v-else class="alert alert-warning text-center pastel-alert" role="alert">
+
+        <div v-else class="alert alert-warning text-center pastel-alert" role="alert" aria-live="polite">
             Nessuna task trovata. Inizia creando una nuova task!
         </div>
     </div>
@@ -81,39 +96,20 @@ export default {
 .task-list {
     color: $text-color;
     header {
-        h1 {
-            color: $primary-color;
-        }
+        h1 { color: $primary-color; }
         .btn-primary, .pastel-btn {
             background-color: $btn-primary-bg;
             color: $btn-primary-color;
-            &:hover {
-                background-color: $pastel-blue-dark;
-            }
+            &:hover { background-color: $pastel-blue-dark; }
         }
     }
-    .pastel-table {
-        background-color: $secondary-color;
-    }
+    .pastel-table { background-color: var(--color-surface); }
     .table {
-        thead {
-            background-color: $primary-color;
-            color: $white;
-        }
-        tbody {
-            tr {
-                &:hover {
-                    background-color: lighten($primary-color, 40%);
-                }
-            }
-        }
+        thead { background-color: $primary-color; color: $white; }
+        tbody tr:hover { background-color: lighten($primary-color, 40%); }
         .btn-outline-primary, .pastel-btn-outline {
-            color: $primary-color;
-            border-color: $primary-color;
-            &:hover {
-                background-color: $primary-color;
-                color: $white;
-            }
+            color: $primary-color; border-color: $primary-color;
+            &:hover { background-color: $primary-color; color: $white; }
         }
     }
     .pastel-alert {
@@ -123,17 +119,14 @@ export default {
     }
 }
 .btn-action {
-  background-color: $accent-color;
-  color: $white;
+  background-color: var(--color-accent);
+  color: #fff;
   border: none;
   border-radius: $btn-border-radius;
   font-weight: bold;
   letter-spacing: 0.5px;
   padding: $btn-padding-y $btn-padding-x;
   transition: background-color $transition-duration $transition-timing-function, color $transition-duration $transition-timing-function;
-  &:hover {
-    background-color: $accent-dark;
-    color: $white;
-  }
+  &:hover { background-color: var(--color-accent-strong); color: #fff; }
 }
 </style>

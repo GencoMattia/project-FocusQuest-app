@@ -94,9 +94,7 @@ export default {
 
         logInUser(event) {
             event.preventDefault();
-            if (!this.validateInput()) {
-                return;
-            }
+            if (!this.validateInput()) return;
             this.errors = {};
             api.post("auth/login", {
                 email: this.userEmail,
@@ -111,6 +109,7 @@ export default {
                     this.userEmail = "";
                     this.userPassword = "";
                     this.errors = {};
+                    this.store.addToast('Bentornato!', 'success');
                     this.$router.push("/dashboard");
                 }).catch((error) => {
                     if (error.response && error.response.data) {
@@ -118,6 +117,7 @@ export default {
                     } else {
                         this.errors.server = "Errore di connessione";
                     }
+                    this.store.addToast(this.errors.server, 'error');
                 });
         }
     }

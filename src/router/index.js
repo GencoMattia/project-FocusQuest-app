@@ -16,54 +16,57 @@ const router = createRouter({
     {
       path: '/',
       name: 'home',
-      component: PageHome
+      component: PageHome,
+      meta: { breadcrumb: 'Home' }
     },
     {
       path: '/login',
       name: 'login',
-      component: PageLogin
+      component: PageLogin,
+      meta: { breadcrumb: 'Login' }
     },
     {
       path: '/register',
       name: 'register',
-      component: PageSignIn
+      component: PageSignIn,
+      meta: { breadcrumb: 'Registrazione' }
     },
     {
       path: '/dashboard',
       name: 'dashboard',
       component: PageDashboard,
-      meta: { requireAuth: true },
+      meta: { requireAuth: true, breadcrumb: 'Dashboard' },
     },
     {
       path: '/profile/:name',
       name: 'profile',
       component: PageProfile,
-      meta: { requireAuth: true },
+      meta: { requireAuth: true, breadcrumb: 'Profilo' },
       props: true
     },
     {
       path: '/tasks',
       name: "tasks.index",
       component: PageTaskIndex,
-      meta: {requireAuth: true}
+      meta: {requireAuth: true, breadcrumb: 'Tasks'}
     },
     {
       path: '/tasks/new',
       name: "tasks.create",
       component: CreateNewTask,
-      meta: {requireAuth: true}
+      meta: {requireAuth: true, breadcrumb: 'Nuova Task'}
     },
     {
       path: '/tasks/:id',
       name: 'tasks.show',
       component: PageTaskShow,
-      meta: {requireAuth: true}
+      meta: {requireAuth: true, breadcrumb: 'Dettaglio Task'}
     },
     {
       path: '/tasks/:id/moments/new',
       name: "moments.create",
       component: CreateNewMoment,
-      meta: {requireAuth: true},
+      meta: {requireAuth: true, breadcrumb: 'Nuovo Momento'},
     }
   ]
 });

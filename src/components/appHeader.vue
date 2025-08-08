@@ -1,11 +1,14 @@
 <template>
-    <nav class="navbar navbar-expand-lg bg-body-tertiary w-100">
+    <nav class="navbar navbar-expand-lg fq-sticky" :class="{ 'is-hidden': isHidden }" role="navigation" aria-label="Main navigation">
         <div class="container-fluid">
             <button class="navbar-toggler" type="button" data-bs-toggle="collapse"
                 data-bs-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false"
                 aria-label="Toggle navigation">
                 <span class="navbar-toggler-icon"></span>
             </button>
+
+            <RouterLink class="navbar-brand fw-semibold" :to="{ name: 'home'}" aria-label="Home">FocusQuest</RouterLink>
+
             <div class="collapse navbar-collapse" id="navbarSupportedContent">
                 <ul class="navbar-nav me-auto mb-2 mb-lg-0">
                     <li class="nav-item">
@@ -15,7 +18,13 @@
                         <router-link class="nav-link" :to="{ name: 'tasks.index'}">Lista Task</router-link>
                     </li>
                 </ul>
-                <div class="d-flex align-items-center">
+                <div class="d-flex align-items-center gap-2">
+                    <!-- Theme toggle -->
+                    <button class="btn btn-sm btn-outline-primary" @click="toggleTheme" :aria-pressed="store.theme==='dark'" aria-label="Toggle theme">
+                        <span v-if="store.theme==='dark'">Light</span>
+                        <span v-else>Dark</span>
+                    </button>
+
                     <div class="dropdown">
                         <a class="nav-link dropdown-toggle" role="button" id="navbarDropdown" data-bs-toggle="dropdown"
                             aria-expanded="false">
@@ -48,7 +57,10 @@ export default {
     data() {
         return {
             isAuthenticated: !!localStorage.getItem("token"),
-            store
+            store,
+            isHidden: false,
+            _lastScrollY: 0,
+            _idleTimer: null,
         };
     },
     methods: {
@@ -57,9 +69,24 @@ export default {
             this.isAuthenticated = false;
             this.store.loggedUser = { id: '', name: '', surname: '', email: '' };
             this.$router.push({ name: 'home' });
+            this.$nextTick(() => this.store.addToast('Logout effettuato', 'success'));
         },
         checkAuthStatus() {
             this.isAuthenticated = !!localStorage.getItem("token");
+        },
+        toggleTheme() {
+            const next = this.store.theme === 'dark' ? 'light' : 'dark';
+            this.store.setTheme(next);
+        },
+        _onScroll() {
+            const y = window.scrollY || 0;
+            this.isHidden = y > this._lastScrollY && y > 56; // hide on scroll down
+            this._lastScrollY = y;
+
+            clearTimeout(this._idleTimer);
+            this._idleTimer = setTimeout(() => {
+                if (window.scrollY > 100) this.isHidden = true; // auto-hide after idle
+            }, 2500);
         }
     },
     watch: {
@@ -70,7 +97,10 @@ export default {
     mounted() {
         this.checkAuthStatus();
         this.$watch(() => this.store.loggedUser, () => this.checkAuthStatus(), { deep: true });
-        console.log('utente loggato', this.store.loggedUser);
+        window.addEventListener('scroll', this._onScroll, { passive: true });
+    },
+    unmounted() {
+        window.removeEventListener('scroll', this._onScroll);
     }
 };
 </script>
@@ -79,43 +109,31 @@ export default {
 @use "../assets/partials/_variables.scss" as *;
 
 .navbar {
-    width: 100vw;
-    min-width: 100vw;
-    margin-left: calc(-50vw + 50%);
-    margin-right: calc(-50vw + 50%);
+    width: 100%;
     border-radius: 0;
-    background: $pastel-blue;
+    background: var(--color-surface);
+    color: var(--color-text);
     box-shadow: 0 2px 8px rgba(0,0,0,0.04);
 }
-
-.navbar-nav .nav-item {
-    margin-right: 15px;
+.navbar-brand, .nav-link {
+    color: var(--color-text);
 }
-
-/* Navbar links style */
-.navbar-nav .nav-link {
-    color: $text-color;
-    font-weight: 500;
-    transition: color 0.3s ease;
-}
-
-/* Navbar link hover effect */
 .navbar-nav .nav-link:hover {
-    color: $primary-color;
+    color: var(--color-primary);
 }
-
-/* Dropdown menu alignment and style */
 .dropdown-menu {
-    background-color: $secondary-color;
+    background-color: var(--color-surface);
 }
-
-/* Dropdown item style */
-.dropdown-item {
-    transition: background-color 0.3s ease;
-}
-
 .dropdown-item:hover {
-    background-color: $pastel-accent;
-    color: $primary-color;
+    background-color: rgba(118,181,255,0.15);
+    color: var(--color-text);
+}
+.btn-outline-primary {
+    border-color: var(--color-primary);
+    color: var(--color-primary);
+}
+.btn-outline-primary:hover {
+    background: var(--color-primary);
+    color: #fff;
 }
 </style>

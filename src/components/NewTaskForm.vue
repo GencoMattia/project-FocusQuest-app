@@ -1,7 +1,8 @@
 <script>
 import api from '@/api/axios';
 import { nextTick } from 'vue';
-// Removed global debounceTimeout declaration
+
+let debounceTimeout = null; // <-- reintroduce scoped debounce holder
 
 export default {
     data() {
@@ -9,7 +10,6 @@ export default {
             categories: null,
             statuses: null,
             priorities: null,
-
             data: {
                 formName: '',
                 formDescription: '',
@@ -19,118 +19,83 @@ export default {
                 formPriorityId: 0,
                 formDeadline: "",
             },
-
             suggestedTasks: [],
             showDropdown: false,
             taskSelected: false,
-
             errors: {},
             isSubmitting: false,
-            lastFormName: '', // <--- aggiungi questa variabile
+            lastFormName: '',
         }
     },
-
     watch: {
         "data.formName": function (newVal) {
-            console.log('[WATCH] data.formName changed:', newVal, 'taskSelected:', this.taskSelected);
-            if (this.taskSelected) {
-                console.log('[WATCH] taskSelected is true, resetting to false and returning');
-                this.taskSelected = false;
-                return;
-            }
-            // Evita chiamate duplicate se il valore non è cambiato realmente
-            if (newVal === this.lastFormName) {
-                console.log('[WATCH] formName unchanged, skipping');
-                return;
-            }
+            if (this.taskSelected) { this.taskSelected = false; return; }
+            if (newVal === this.lastFormName) return;
             this.lastFormName = newVal;
 
-            if (newVal.length > 1) {
-                console.log('[WATCH] Calling getSuggestedTask()');
+            if (newVal && newVal.length > 1) {
                 this.getSuggestedTask();
             } else {
-                console.log('[WATCH] Clearing suggestions and hiding dropdown');
                 this.suggestedTasks = [];
                 this.showDropdown = false;
             }
         }
     },
-
     methods: {
         validateInput() {
             this.errors = {};
-
-            // Task's name validator
+            // Task name
             if (!this.data.formName) {
-                this.errors.name = "Ogni task deve avere un nome"
+                this.errors.name = "Ogni task deve avere un nome";
             } else if (this.data.formName.length < 3 || this.data.formName.length > 150) {
-                this.errors.name = "Il nome della task deve essere compreso tra 3 e 150 caratteri"
+                this.errors.name = "Il nome della task deve essere compreso tra 3 e 150 caratteri";
             }
-
-            // Task's description validator
+            // Description
             if (this.data.formDescription.length > 300) {
-                this.errors.description = "La descrizione deve essere inferiore ai 300 caratteri"
+                this.errors.description = "La descrizione deve essere inferiore ai 300 caratteri";
             }
-
-            // Task's estimated_time validator
+            // Estimated time
             const hours = parseInt(this.data.formHours);
             const minutes = parseInt(this.data.formMinutes);
             if ((isNaN(hours) || hours < 0) || (isNaN(minutes) || minutes < 0)) {
                 this.errors.estimatedTime = "Ore e minuti devono essere valori positivi";
+            } else if (minutes > 59) {
+                this.errors.estimatedTime = "I minuti devono essere compresi tra 0 e 59";
             } else if (hours === 0 && minutes === 0) {
                 this.errors.estimatedTime = "Devi inserire almeno 1 minuto o 1 ora";
             }
-
-            // Task's deadline validator
+            // Deadline
             if (this.data.formDeadline) {
-                const currentDate = new Date();
-                const deadlineDate = new Date(this.data.formDeadline);
-
-                // remove hours so that only the day it is compared
+                const currentDate = new Date(); const deadlineDate = new Date(this.data.formDeadline);
                 currentDate.setHours(0, 0, 0, 0);
-
-                if (deadlineDate < currentDate) {
-                    this.errors.deadline = "La deadline non può essere precedente ad oggi";
-                }
+                if (deadlineDate < currentDate) this.errors.deadline = "La deadline non può essere precedente ad oggi";
             }
-
-            // Categoria e priorità devono essere selezionate
+            // Category & priority
             if (!this.data.formCategoryId || this.data.formCategoryId === 0) {
                 this.errors.category = "Seleziona una categoria";
             }
             if (!this.data.formPriorityId || this.data.formPriorityId === 0) {
                 this.errors.priority = "Seleziona una priorità";
             }
-
-            //If there are any errors return false, otherwise return true
             return Object.keys(this.errors).length === 0;
         },
-
         clearValidationMessage(field) {
             this.errors[field] = "";
         },
-
         fillForm(task) {
-            console.log('[fillForm] Filling form with task:', task);
             this.data.formName = task.name;
             this.data.formDescription = task.description;
             this.data.formHours = Math.floor(task.estimated_time / 60);
             this.data.formMinutes = task.estimated_time % 60;
             this.data.formCategoryId = task.category_id;
             this.data.formPriorityId = task.priority_id;
-
             this.taskSelected = true;
             this.showDropdown = false;
-            nextTick(() => {
-                console.log('[fillForm] nextTick: setting taskSelected to false');
-                this.taskSelected = false;
-            });
+            nextTick(() => { this.taskSelected = false; });
         },
-
         getTotalMinutes(hours, minutes) {
             return (parseInt(hours) * 60) + parseInt(minutes);
         },
-
         getData() {
             api.get('tasks/form-data')
                 .then((response) => {
@@ -138,43 +103,31 @@ export default {
                     this.priorities = response.data.data.priorities;
                     this.statuses = response.data.data.statuses;
                 })
-                .catch((error) => {
-                    console.error('Error loading form data:', error);
+                .catch(() => {
+                    console.error('Error loading form data');
                 });
         },
-
         getSuggestedTask() {
-            console.log('[getSuggestedTask] Called with formName:', this.data.formName);
             clearTimeout(debounceTimeout);
-            if (this.data.formName.length > 1) {
-                debounceTimeout = setTimeout(() => {
-                    api.get(`tasks/suggest-tasks?query=${this.data.formName}`)
-                        .then((response) => {
-                            console.log('[getSuggestedTask] Suggestions:', response.data.tasks);
-                            this.suggestedTasks = response.data.tasks;
-                            this.showDropdown = true;
-                        })
-                        .catch((error) => {
-                            console.error('[getSuggestedTask] Error loading task suggestions:', error);
-                            this.suggestedTasks = [];
-                            this.showDropdown = true;
-                        });
-                }, 300); // 300ms debounce
-            } else {
-                this.suggestedTasks = [];
-                this.showDropdown = false;
-            }
+            const q = this.data.formName;
+            if (!q || q.length <= 1) { this.suggestedTasks = []; this.showDropdown = false; return; }
+            debounceTimeout = setTimeout(() => {
+                api.get(`tasks/suggest-tasks?query=${encodeURIComponent(q)}`)
+                    .then((response) => {
+                        this.suggestedTasks = response.data.tasks || [];
+                        this.showDropdown = true;
+                    })
+                    .catch(() => {
+                        this.suggestedTasks = [];
+                        this.showDropdown = true;
+                    });
+            }, 300);
         },
-
         async createNewTask() {
-            console.log('[createNewTask] Called, isSubmitting:', this.isSubmitting);
             if (this.isSubmitting) return;
-            if (!this.validateInput()) {
-                return;
-            }
+            if (!this.validateInput()) return;
             this.isSubmitting = true;
             const estimatedTime = this.getTotalMinutes(this.data.formHours, this.data.formMinutes);
-
             try {
                 const response = await api.post('tasks/create', {
                     name: this.data.formName,
@@ -184,7 +137,6 @@ export default {
                     priority_id: this.data.formPriorityId,
                     deadline: this.data.formDeadline,
                 });
-                // Redirect to the newly created task page
                 if (response.data && response.data.task && response.data.task.id) {
                     this.$router.push({ name: 'tasks.show', params: { id: response.data.task.id } });
                 }
@@ -202,9 +154,7 @@ export default {
                 this.isSubmitting = false;
             }
         },
-
         resetForm() {
-            console.log('[resetForm] Resetting form');
             this.data.formName = '';
             this.data.formDescription = '';
             this.data.formHours = 0;
@@ -215,24 +165,14 @@ export default {
             this.suggestedTasks = [];
             this.showDropdown = false;
         },
-
         onCreateNewTaskClick() {
-            console.log('[onCreateNewTaskClick] Clicked + Create New Task');
             this.showDropdown = false;
             this.suggestedTasks = [];
             this.taskSelected = true;
-            // opzionale: this.data.formName = '';
-            nextTick(() => {
-                console.log('[onCreateNewTaskClick] nextTick: setting taskSelected to false');
-                this.taskSelected = false;
-            });
+            nextTick(() => { this.taskSelected = false; });
         },
     },
-
-    mounted() {
-        console.log('[mounted] NewTaskForm mounted');
-        this.getData();
-    }
+    mounted() { this.getData(); }
 }
 </script>
 
@@ -240,8 +180,12 @@ export default {
     <form class="task-form" @submit.prevent="createNewTask">
         <div class="mb-3">
             <label for="form-name" class="form-label">Task Name</label>
-            <input type="text" v-model="data.formName" @input="(getSuggestedTask(), clearValidationMessage('name'))"
-                class="form-control styled-input" id="form-name" name="name" placeholder="Enter task name">
+            <input
+                type="text"
+                v-model="data.formName"
+                @input="clearValidationMessage('name')"
+                class="form-control styled-input"
+                id="form-name" name="name" placeholder="Enter task name">
 
             <!-- Show name error -->
             <div v-if="errors.name" class="error-message">
@@ -249,12 +193,14 @@ export default {
             </div>
 
             <!-- Suggestions Dropdown -->
-            <ul v-if="showDropdown" class="dropdown suggestions-list">
+            <ul v-if="showDropdown" class="dropdown suggestions-list" role="listbox" aria-label="Suggerimenti">
                 <li v-for="task in suggestedTasks" :key="task.id" @click="fillForm(task)"
-                    class="suggestion-item button-like">
+                    class="suggestion-item button-like" role="option">
                     {{ task.name }}
                 </li>
-                <li @click="onCreateNewTaskClick" class="suggestion-item new-task-button">+ Create New Task</li>
+                <li @click="onCreateNewTaskClick" class="suggestion-item new-task-button" role="option">
+                    + Create New Task
+                </li>
             </ul>
         </div>
 

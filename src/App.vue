@@ -1,8 +1,9 @@
 <script setup>
-import { RouterLink, RouterView } from 'vue-router';
+import { RouterLink, RouterView, useRoute } from 'vue-router';
 import appHeader from './components/appHeader.vue';
+import { store } from './store';
 
-
+const route = useRoute();
 </script>
 
 <template>
@@ -10,7 +11,26 @@ import appHeader from './components/appHeader.vue';
     <header>
       <appHeader />
     </header>
+
+    <!-- Breadcrumbs -->
+    <nav class="fq-breadcrumbs container" aria-label="breadcrumb">
+      <template v-for="(m, i) in route.matched" :key="m.path">
+        <RouterLink v-if="i < route.matched.length - 1" :to="m.path">
+          {{ m.meta?.breadcrumb || m.name }}
+        </RouterLink>
+        <span v-else aria-current="page">{{ m.meta?.breadcrumb || m.name }}</span>
+        <span v-if="i < route.matched.length - 1" class="sep">/</span>
+      </template>
+    </nav>
+
     <RouterView />
+
+    <!-- Global Toasts -->
+    <div class="fq-toasts" role="region" aria-live="polite" aria-label="Notifiche">
+      <div v-for="t in store.toasts" :key="t.id" class="fq-toast" :class="t.variant" role="alert">
+        {{ t.message }}
+      </div>
+    </div>
   </div>
 </template>
 
@@ -21,6 +41,6 @@ import appHeader from './components/appHeader.vue';
 
 #app-bg {
   min-height: 100vh;
-  background: linear-gradient(135deg, $primary-color 30%, $pastel-accent 100%);
+  background: linear-gradient(135deg, var(--gradient-start) 30%, var(--gradient-end) 100%);
 }
 </style>
